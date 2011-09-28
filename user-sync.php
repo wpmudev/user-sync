@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.0 Beta 6
+Version: 1.0 Beta 6.1
 Author: Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -26,12 +26,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 if ( !function_exists( 'wdp_un_check' ) ) {
-  add_action( 'admin_notices', 'wdp_un_check', 5 );
-  add_action( 'network_admin_notices', 'wdp_un_check', 5 );
-  function wdp_un_check() {
+    add_action( 'admin_notices', 'wdp_un_check', 5 );
+    add_action( 'network_admin_notices', 'wdp_un_check', 5 );
+    function wdp_un_check() {
     if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'install_plugins' ) )
-      echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
-  }
+        echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'wpmudev') . '</a></p></div>';
+    }
 }
 
 
@@ -41,6 +41,11 @@ if ( !function_exists( 'wdp_un_check' ) ) {
 
 class User_Sync {
 
+    var $debug_mode;
+    var $plugin_dir;
+    var $plugin_url;
+    var $error;
+
     function User_Sync() {
         __construct();
     }
@@ -49,22 +54,63 @@ class User_Sync {
 	 * PHP 5 constructor
 	 **/
 	function __construct() {
+
+        load_plugin_textdomain( 'user-sync', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+        //setup proper directories
+        if ( is_multisite() && defined( 'WPMU_PLUGIN_URL' ) && defined( 'WPMU_PLUGIN_DIR' ) && file_exists( WPMU_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
+            $this->plugin_dir = WPMU_PLUGIN_DIR . '/user-sync/';
+            $this->plugin_url = WPMU_PLUGIN_URL . '/user-sync/';
+        } else if ( defined( 'WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/user-sync/' . basename( __FILE__ ) ) ) {
+            $this->plugin_dir = WP_PLUGIN_DIR . '/user-sync/';
+            $this->plugin_url = WP_PLUGIN_URL . '/user-sync/';
+        } else if ( defined('WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
+            $this->plugin_dir = WP_PLUGIN_DIR;
+            $this->plugin_url = WP_PLUGIN_URL;
+        } else {
+            wp_die( __( 'There was an issue determining where WPMU DEV User Sync is installed. Please reinstall.', 'user-sync' ) );
+        }
+
+        // Check for safe mode
+        if( ini_get( 'safe_mode' ) ) {
+            //notice for safe mode
+            $this->safe_mode_notice = __( "NOTE: Your server works in the 'Safe Mode' - If you have a large number of users for sync and your php settings are of little value for 'max_execution_time' it can cause problems with connection of subsites and full sinchronization.", 'user-sync' );
+        } else {
+            // set unlimit time
+            set_time_limit(0);
+        }
+
         if( isset( $_POST[ 'user_sync_settings' ] ) )
             add_action( 'admin_init', array( &$this, 'add_settings' ) );
 
         add_action( 'admin_head', array( &$this, 'add_css' ) );
         add_action( 'admin_menu', array( &$this, 'admin_page' ) );
-        add_action( 'profile_update', array( &$this, 'user_change_data' ) );
-        add_action( 'user_register', array( &$this, 'user_create' ) );
-        add_action( 'delete_user', array( &$this, 'user_delete_data' ) );
+
+        //actions only for master site
+        if ( "central" == get_option( 'user_sync_status' ) ) {
+            add_action( 'profile_update', array( &$this, 'user_change_data' ) );
+            add_action( 'user_register', array( &$this, 'user_create' ) );
+            add_action( 'delete_user', array( &$this, 'user_delete_data' ) );
+        }
+
+        //turn on debug mode
+        if ( "1" == get_option( 'user_sync_debug' ) ) {
+            $this->debug_mode = 1;
+        }
+
         register_deactivation_hook ( __FILE__, array( &$this, 'deactivation' ) );
-        load_plugin_textdomain( 'user-sync', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 
         add_action( 'wp_ajax_nopriv_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
         add_action( 'wp_ajax_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
 
         add_action( 'wp_ajax_nopriv_user_sync_settings', array( &$this, 'user_sync_edit_settings' ) );
         add_action( 'wp_ajax_user_sync_settings', array( &$this, 'user_sync_edit_settings' ) );
+
+        if ( isset( $_REQUEST['page'] ) && 'user-sync' == $_REQUEST['page']  ) {
+            wp_register_script( 'jquery_tooltips', $this->plugin_url . 'js/jquery.tools.min.js' );
+            wp_enqueue_script( 'jquery_tooltips' );
+        }
 
 	}
 
@@ -74,6 +120,26 @@ class User_Sync {
     function admin_page() {
         add_menu_page( __( 'User Sync', 'user-sync' ), __( 'User Sync', 'user-sync' ), 'manage_options', 'user-sync', array( &$this, 'main_page' ) );
     }
+
+
+    /**
+     * Write log
+     **/
+    function write_log( $message ) {
+        if ( isset( $this->debug_mode ) && 1 == $this->debug_mode ) {
+            if ( "central" == get_option( 'user_sync_status' ) )
+                $site_type = "[C] ";
+            else
+                $site_type = "[S] ";
+
+            $file = $this->plugin_dir . "log/errors.log";
+            $handle = fopen( $file, 'ab' );
+            $data = date( "[Y-m-d H:i:s]" ) . $site_type . $message . "***\r\n";
+            fwrite($handle, $data);
+            fclose($handle);
+        }
+    }
+
 
     /**
      * Adding css style in Head section
@@ -104,19 +170,43 @@ class User_Sync {
 
            #toplevel_page_user-sync
            div.wp-menu-image{
-                background: url("<?php echo WP_PLUGIN_URL; ?>/user-sync/user-sync.png") no-repeat scroll 0px 0px transparent;
+                background: url("<?php echo $this->plugin_url ?>images/user-sync.png") no-repeat scroll 0px 0px transparent;
             }
 
             #toplevel_page_user-sync:hover
             div.wp-menu-image{
-                background: url("<?php echo WP_PLUGIN_URL; ?>/user-sync/user-sync.png") no-repeat scroll 0px -32px transparent;
+                background: url("<?php echo $this->plugin_url ?>images/user-sync.png") no-repeat scroll 0px -32px transparent;
             }
 
             #toplevel_page_user-sync.current
             div.wp-menu-image{
-                background: url("<?php echo WP_PLUGIN_URL; ?>/user-sync/user-sync.png") no-repeat scroll 0px -32px transparent;
+                background: url("<?php echo $this->plugin_url ?>images/user-sync.png") no-repeat scroll 0px -32px transparent;
             }
 
+            .debug_message {
+                background-color: #FFFFE0;
+                border-style: solid;
+                border-width: 1px;
+                border-color: #E6DB55;
+                margin: 0px 0px 0px 0px;
+                padding: 5px 10px 5px 10px;
+                -moz-border-radius: 3px 3px 3px 3px;
+            }
+
+            .tooltip {
+                display:none;
+                background:transparent url("<?php echo $this->plugin_url ?>images/black_arrow_big.png");
+                font-size:12px;
+                height:166px;
+                width:320px;
+                padding:25px;
+                color:#fff;
+            }
+
+            /* tooltip styling. by default the element to be styled is .tooltip  */
+            .tooltip_img {
+                vertical-align: middle;
+            }
 
         </style>
     <?php
@@ -126,7 +216,7 @@ class User_Sync {
      * Set site settings
      **/
     function add_settings() {
-        switch( $_POST[ 'user_sync_settings' ] ) {
+        switch( $_POST['user_sync_settings'] ) {
             //Saving choose of site "Central" or "Subsite"
             case "type_site":
                 //creating additional options for central site
@@ -141,6 +231,10 @@ class User_Sync {
                     add_option( "user_sync_status", $_POST['user_sync_status'], '', 'no' );
                     add_option( "user_sync_deleted_users", "", '', 'no' );
                 }
+
+                //set debug mode
+                if ( isset ( $_POST['debug'] ) && '1' == $_POST['debug'] )
+                    add_option( "user_sync_debug", "1", '', 'no' );
             break;
 
             //Creating additional options of Subsite and Saving URL of Central site and Security Key
@@ -255,15 +349,24 @@ class User_Sync {
         $url = $url . "/wp-admin/admin-ajax.php?action=user_sync_api&". $par;
 
         $args =  array(
-            'timeout' => 90
+            'timeout' => 0
             );
+
+        //writing some information in the plugin log file
+        $this->write_log( "02 - sending request - url={$url};;" );
 
         $response = wp_remote_get( $url, $args );
 
         if( is_wp_error( $response ) ) {
+            //writing some information in the plugin log file
+            $this->write_log( "04 - sending request: something went wrong" );
+
 //           echo 'Something went wrong!';
         } else {
-           return $response["body"];
+            //writing some information in the plugin log file
+            $this->write_log( "03 - sending request - response={$response["body"]};;" );
+
+            return $response["body"];
         }
 
     }
@@ -279,10 +382,17 @@ class User_Sync {
         $hash = $this->user_sync_send_request( $url, "str=" . $str );
 
         //checking hash from Subsite and Central site
-        if ( $hash == md5( $str . "" . $key ) )
+        if ( $hash == md5( $str . "" . $key ) ) {
+            //writing some information in the plugin log file
+            $this->write_log( "05 - checking key true;;" );
+
             return true;
-        else
+        } else {
+            //writing some information in the plugin log file
+            $this->write_log( "06 - checking key false;;" );
+
             return false;
+        }
     }
 
     /**
@@ -359,7 +469,7 @@ class User_Sync {
             //Checking key of security from Subsite
             if ( $this->check_key( $one['url'], $key ) )
                 foreach ( $users_id as $user_id ) {
-                    // get all information about user
+                    //get all information about user
                     $userdata = (array) get_userdata( $user_id );
 
                     $p = array ( 'param' => array( 'replace_user' => $one['param']['replace_user'], 'overwrite_user' => $one['param']['overwrite_user'] ),
@@ -367,6 +477,9 @@ class User_Sync {
 
                     $p =  base64_encode( serialize ( $p ) );
                     $hash = md5( $p . $key );
+
+                    //writing some information in the plugin log file
+                    $this->write_log( "09 - user sync" );
 
                     //sent information about user and hash to Subsite
                     $this->user_sync_send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p );
@@ -459,6 +572,10 @@ class User_Sync {
             $overwrite_user = 1;
 
         $p = array ('url' => get_option( 'siteurl' ), 'replace_user' => $replace_user, 'overwrite_user' => $overwrite_user );
+
+        //writing some information in the plugin log file
+        $this->write_log( "01 - new sub site activating - central_url={$central_url};; replace_user={$replace_user};; overwrite_user={$overwrite_user};;" );
+
         $p =  base64_encode( serialize ( $p ) );
 
         $hash = md5( $p . $key );
@@ -516,6 +633,10 @@ class User_Sync {
 
                         if( $user_sync_id ) {
                             //Update user
+
+                            //writing some information in the plugin log file
+                            $this->write_log( "10 - update user" );
+
                             //checking settings of overwrite user and flag of users that sync from master site
                             if ( 1 == $p['param']['overwrite_user'] && "1" != get_user_meta( $user_sync_id, "user_sync", true ) ) {
 
@@ -524,6 +645,10 @@ class User_Sync {
 
                                 //if user exist we have new ID in $user_sync_id and we can use code below for Update user data
                                 if( ! $user_sync_id ) {
+
+                                    //writing some information in the plugin log file
+                                    $this->write_log( "11 - don't overwrite user" );
+
                                     //changing user login adding  _sync
                                     $p['userdata']['user_login'] = $p['userdata']['user_login'] . "_sync";
 
@@ -546,10 +671,16 @@ class User_Sync {
                                     //Update other data of user
                                     $this->update_other_user_data( $p['userdata'], $user_sync_last_id );
 
+                                    //writing some information in the plugin log file
+                                    $this->write_log( "12 - don't overwrite user - ok" );
 
                                     return;
                                 }
                             }
+
+                            //writing some information in the plugin log file
+                            $this->write_log( "13 - overwrite user" );
+
                             $p['userdata']['ID'] = $user_sync_id;
 
                             //cut user password
@@ -568,13 +699,26 @@ class User_Sync {
                             //Update other data of user
                             $this->update_other_user_data( $p['userdata'], $user_sync_last_id );
 
+                            //writing some information in the plugin log file
+                            $this->write_log( "14 - overwrite user - ok" );
+
                         } else {
+
+                            //writing some information in the plugin log file
+                            $this->write_log( "15 - insert user - step 1" );
+
                             if ( 1 == $p['param']['replace_user'] ) {
                                 $user_sync_deleted_users = get_option( 'user_sync_deleted_users' );
+
+                                //writing some information in the plugin log file
+                                $this->write_log( "16 - do not replace deleted users" );
 
                                 if ( false !== array_search( $p['userdata']['user_login'], $user_sync_deleted_users ) )
                                     return;
                             }
+
+                            //writing some information in the plugin log file
+                            $this->write_log( "17 - insert user - step 2" );
 
                             //delete user ID for Insert new user
                             array_splice( $p['userdata'], 0, 1 );
@@ -598,8 +742,8 @@ class User_Sync {
                             //flag for users that sync from master site
                             add_user_meta( $user_sync_last_id, "user_sync", "1", false );
 
-
-
+                            //writing some information in the plugin log file
+                            $this->write_log( "18 - insert user - ok" );
                         }
 
                         die( "ok" );
@@ -654,7 +798,6 @@ class User_Sync {
                                  $user_sync_sub_urls[] = $p;
                                  update_option( "user_sync_sub_urls", $user_sync_sub_urls );
                             }
-
                         } else {
                             $user_sync_sub_urls[] = $p;
                             update_option( "user_sync_sub_urls", $user_sync_sub_urls );
@@ -662,6 +805,10 @@ class User_Sync {
 
                         //Get all users ID
                         $user_sync_users_id = $this->user_sync_get_all_users_id();
+
+                        //writing some information in the plugin log file
+                        $this->write_log( "07 - add new sub site" );
+                        $this->write_log( "08 - count of users= ". count( $user_sync_users_id ) . ";;" );
 
                         $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
 
@@ -707,7 +854,7 @@ class User_Sync {
 
         if ( false == ( $user_sync_status ) ) {
         ?>
-            <script language="JavaScript">
+            <script type="text/javascript">
                 jQuery( document ).ready( function() {
                     jQuery.fn.makeChose = function ( id ) {
                         if ( 1 == id )
@@ -731,10 +878,31 @@ class User_Sync {
                     <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
                     <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
                 </p>
+
+                <?php
+                //safe mode notice
+                if ( isset(  $this->safe_mode_notice ) ) {
+                   echo '<div id="message" class="error fade"><p> '. $this->safe_mode_notice . '</p></div>';
+                }
+                ?>
+
                 <form method="post" action="" id="user_sync_form">
                     <input type="hidden" name="user_sync_settings" value="type_site" />
                     <input type="hidden" name="user_sync_status" id="user_sync_status" value="" />
                     <table class="form-table">
+                        <tr valign="top">
+                            <td>
+                                <div class="debug_message" >
+
+                                    <?php _e( 'Note: If you have any problems with sync users you can use debug mode for writing some operations in the log file. You need open folder "/plugins/user-sync/log/" for writing. What do with log files you can read in instruction of plugin', 'user-sync' );  ?>
+                                    <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'here', 'user-sync' ) ?></a>
+                                    <br />
+                                    <input type="checkbox" name="debug" id="debug" value="1" />
+                                    <label for="debug"><?php _e( 'Use Debug Mode', 'user-sync' ) ?></label>
+
+                                </div>
+                            </td>
+                        </tr>
                         <tr valign="top">
                             <td>
                             <input type="button" value="<?php _e( 'Make this site the Master site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 1 );" />
@@ -754,7 +922,7 @@ class User_Sync {
                 $disabled = 'readonly="readonly"';
 
         ?>
-            <script language="JavaScript">
+            <script type="text/javascript">
                 jQuery( document ).ready( function() {
                     jQuery( "#user_sync_form" ).submit( function () {
                         if ( "" == jQuery( "#user_sync_url_c" ).val() ) {
@@ -769,7 +937,12 @@ class User_Sync {
 
                         return true;
                     });
+
+                    jQuery(".tooltip_img[title]").tooltip();
+
                 });
+
+
             </script>
             <div class="wrap">
                 <h2><?php _e( 'Subsite Settings', 'user-sync' ) ?></h2>
@@ -827,10 +1000,18 @@ class User_Sync {
                     </p>
 
                     <?php if ( "" == $disabled ) {?>
+                        <?php
+                        //safe mode notice
+                        if ( isset( $this->safe_mode_notice ) ):?>
+                            <span style="color: red;" ><?php _e( 'Attantion: Safe Mode!', 'user-sync' ); ?></span>
+                            <img class="tooltip_img" src="<?php echo $this->plugin_url . "images/"; ?>info_small.png" title="<?php echo $this->safe_mode_notice; ?>"/>
+                            <br />
+                        <?php endif; ?>
                         <p class="submit">
                             <input type="hidden" name="user_sync_settings" value="sub_site" />
                             <input type="submit" value="<?php _e( 'Connect this site to the Master site, and do a FULL synchronization', 'user-sync' ) ?>" />
                         </p>
+
                     <?php } else {?>
                         <p class="submit">
                             <input type="hidden" name="user_sync_settings" value="remove_settings" />
@@ -847,7 +1028,7 @@ class User_Sync {
             $user_sync_siteur = get_option( 'siteurl' );
 
         ?>
-            <script language="JavaScript">
+            <script type="text/javascript">
                 jQuery( document ).ready( function() {
                     jQuery.fn.editSettings = function ( id ) {
 
@@ -908,8 +1089,13 @@ class User_Sync {
 
                     });
 
+
+                    jQuery(".tooltip_img[title]").tooltip();
+
+
                 });
             </script>
+
             <div class="wrap">
                 <h2><?php _e( 'Master Site Settings', 'user-sync' ) ?></h2>
                 <h3><?php _e( 'All user data from this master site will be synchronized with connected subsites.', 'user-sync' ) ?></h3>
@@ -943,6 +1129,15 @@ class User_Sync {
                 <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
                 <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
             </p>
+
+            <?php
+            //safe mode notice
+            if ( isset( $this->safe_mode_notice ) ):?>
+                <p>
+                    <span style="color: red;" ><?php _e( 'Attantion: Safe Mode!', 'user-sync' ); ?></span>
+                    <img class="tooltip_img" src="<?php echo $this->plugin_url . "images/"; ?>info_small.png" title="<?php echo $this->safe_mode_notice; ?>"/>
+                </p>
+            <?php endif; ?>
 
             <p><?php _e( 'Registered Subsites:', 'user-sync' ) ?></p>
             <form method="post" action="" id="sub_list">
