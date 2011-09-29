@@ -140,36 +140,30 @@ class User_Sync {
      * Rewrite plugin option from old version
      **/
     function rewrite_options() {
-        //user_sync_status
-        //user_sync_key
-        //user_sync_sub_urls
-        //user_sync_deleted_users
-        //user_sync_debug
-        //user_sync_url_c
 
         if ( get_option( "user_sync_status" ) ) {
             $this->set_options( "status", get_option( "user_sync_status" ) );
-//            delete_option( 'user_sync_status' );
+            delete_option( 'user_sync_status' );
         }
 
         if ( get_option( "user_sync_key" ) ) {
             $this->set_options( "key", get_option( "user_sync_key" ) );
-//            delete_option( 'user_sync_key' );
+            delete_option( 'user_sync_key' );
         }
 
         if ( get_option( "user_sync_sub_urls" ) ) {
             $this->set_options( "sub_urls", get_option( "user_sync_sub_urls" ) );
-//            delete_option( 'user_sync_sub_urls' );
+            delete_option( 'user_sync_sub_urls' );
         }
 
         if ( get_option( "user_sync_url_c" ) ) {
             $this->set_options( "central_url", get_option( "user_sync_url_c" ) );
-//            delete_option( 'user_sync_url_c' );
+            delete_option( 'user_sync_url_c' );
         }
 
         if ( get_option( "user_sync_deleted_users" ) ) {
             $this->set_options( "deleted_users", get_option( "user_sync_deleted_users" ) );
-//            delete_option( 'user_sync_deleted_users' );
+            delete_option( 'user_sync_deleted_users' );
         }
     }
 
