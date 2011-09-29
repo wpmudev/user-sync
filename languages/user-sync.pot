@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WordPress VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-18 08:16+0200\n"
-"PO-Revision-Date: 2011-04-18 08:17+0200\n"
+"POT-Creation-Date: 2011-09-29 23:41+0200\n"
+"PO-Revision-Date: 2011-09-29 23:41+0200\n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,183 +18,242 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: c:\\user-sync\n"
 
+#: c:\user-sync/page-central.php:98
+#: c:\user-sync/page-sub.php:55
+msgid "Debug Mode is activated."
+msgstr ""
+
+#: c:\user-sync/page-central.php:101
+msgid "Master Site Settings"
+msgstr ""
+
+#: c:\user-sync/page-central.php:102
+msgid "All user data from this master site will be synchronized with connected subsites."
+msgstr ""
+
+#: c:\user-sync/page-central.php:106
+#: c:\user-sync/page-sub.php:64
+msgid "URL of Master site:"
+msgstr ""
+
+#: c:\user-sync/page-central.php:114
+msgid "Security Key:"
+msgstr ""
+
+#: c:\user-sync/page-central.php:124
+msgid "To create a sub site, simply install this plugin at the sub site, activate it, make that site a 'Sub' site and enter the URL (including http) and the key supplied here."
+msgstr ""
+
+#: c:\user-sync/page-central.php:125
+#: c:\user-sync/page-sub.php:102
+msgid "Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite."
+msgstr ""
+
+#: c:\user-sync/page-central.php:126
+msgid "Adding new user, or making any changes to user or their details, in the Master site are automatically synced to subsites."
+msgstr ""
+
+#: c:\user-sync/page-central.php:127
+msgid "'Sync all sites now' is used if you edit a subsite setting and need to update users."
+msgstr ""
+
+#: c:\user-sync/page-central.php:128
+msgid "To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on \"Remove all settings\" button or simple deactivate the plugin."
+msgstr ""
+
+#: c:\user-sync/page-central.php:130
+#: c:\user-sync/page-main.php:22
+#: c:\user-sync/page-sub.php:108
+msgid "For detailed 'how to use' instructions refer to:"
+msgstr ""
+
+#: c:\user-sync/page-central.php:131
+#: c:\user-sync/page-main.php:23
+#: c:\user-sync/page-sub.php:109
+msgid "WordPress User Synchronization Installation and Use instructions."
+msgstr ""
+
+#: c:\user-sync/page-central.php:138
+#: c:\user-sync/page-sub.php:116
+msgid "Attantion: Safe Mode!"
+msgstr ""
+
+#: c:\user-sync/page-central.php:143
+msgid "Registered Subsites:"
+msgstr ""
+
+#: c:\user-sync/page-central.php:152
+msgid "URLs"
+msgstr ""
+
+#: c:\user-sync/page-central.php:155
+msgid "Last Sync"
+msgstr ""
+
+#: c:\user-sync/page-central.php:158
+msgid "Settings"
+msgstr ""
+
+#: c:\user-sync/page-central.php:161
+msgid "Action"
+msgstr ""
+
+#: c:\user-sync/page-central.php:193
+#: c:\user-sync/page-sub.php:90
+msgid "Do not replace deleted users"
+msgstr ""
+
+#: c:\user-sync/page-central.php:198
+#: c:\user-sync/page-sub.php:95
+msgid "Don't overwrite any existing users (add them as extra users)"
+msgstr ""
+
+#: c:\user-sync/page-central.php:215
+#: c:\user-sync/page-sub.php:133
+msgid "Uninstall Options"
+msgstr ""
+
+#: c:\user-sync/page-central.php:216
+#: c:\user-sync/page-sub.php:134
+msgid "Delete all plugin's options from DB."
+msgstr ""
+
+#: c:\user-sync/page-central.php:220
+#: c:\user-sync/page-sub.php:138
+msgid "Are you sure?"
+msgstr ""
+
+#: c:\user-sync/page-central.php:222
+#: c:\user-sync/page-sub.php:140
+msgid "No"
+msgstr ""
+
+#: c:\user-sync/page-central.php:223
+#: c:\user-sync/page-sub.php:141
+msgid "Yes"
+msgstr ""
+
+#: c:\user-sync/page-central.php:236
+msgid "Sync all sites now"
+msgstr ""
+
+#: c:\user-sync/page-main.php:15
+msgid "Site Type"
+msgstr ""
+
+#: c:\user-sync/page-main.php:16
+msgid "User sync works by making one site a 'Master' site and all other sites 'Sub'."
+msgstr ""
+
+#: c:\user-sync/page-main.php:17
+msgid "If you want to sync all the users from this site with other sites, make this a Master site."
+msgstr ""
+
+#: c:\user-sync/page-main.php:18
+msgid "However, if you want to sync the users from other sites to this site, make this a Sub site."
+msgstr ""
+
+#: c:\user-sync/page-main.php:19
+msgid "You can always change these options later by deactivating and then reactivating the plugin."
+msgstr ""
+
+#: c:\user-sync/page-main.php:20
+msgid "NB: You must have at least one Master site!"
+msgstr ""
+
+#: c:\user-sync/page-main.php:41
+msgid "Note: If you have any problems with sync users you can use debug mode for writing some operations in the log file. You need open folder \"/plugins/user-sync/log/\" for writing. What do with log files you can read in instruction of plugin"
+msgstr ""
+
+#: c:\user-sync/page-main.php:42
+msgid "here"
+msgstr ""
+
+#: c:\user-sync/page-main.php:45
+msgid "Use Debug Mode"
+msgstr ""
+
+#: c:\user-sync/page-main.php:52
+msgid "Make this site the Master site"
+msgstr ""
+
+#: c:\user-sync/page-main.php:53
+msgid "Make this a Sub site"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:14
+msgid "Please write URL of Central blog"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:19
+msgid "Please write Key of Central blog"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:58
+msgid "Subsite Settings"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:59
+msgid "All user data from the Master site will be synchronized with this site."
+msgstr ""
+
+#: c:\user-sync/page-sub.php:72
+msgid "Key of Master site:"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:81
+msgid "Default settings:"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:85
+msgid "You can change these settings later on the Master site."
+msgstr ""
+
+#: c:\user-sync/page-sub.php:105
+msgid "Click on 'Remove all settings' to disconnect syncing with Master site."
+msgstr ""
+
+#: c:\user-sync/page-sub.php:122
+msgid "Connect this site to the Master site, and do a FULL synchronization"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:128
+msgid "Disconnect from the Master site"
+msgstr ""
+
 #: c:\user-sync/user-sync.php:33
 msgid "Please install the latest version of <a href=\"http://premium.wpmudev.org/project/update-notifications/\" title=\"Download Now &raquo;\">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href=\"http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/\">More information &raquo;</a>"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:75
+#: c:\user-sync/user-sync.php:72
+msgid "There was an issue determining where WPMU DEV User Sync is installed. Please reinstall."
+msgstr ""
+
+#: c:\user-sync/user-sync.php:78
+msgid "NOTE: Your server works in the 'Safe Mode' - If you have a large number of users for sync and your php settings are of little value for 'max_execution_time' it can cause problems with connection of subsites and full sinchronization."
+msgstr ""
+
+#: c:\user-sync/user-sync.php:118
 msgid "User Sync"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:165
+#: c:\user-sync/user-sync.php:302
+msgid "Options are deleted!"
+msgstr ""
+
+#: c:\user-sync/user-sync.php:318
 msgid "Subsite successfully connected to Master site and Synchronization completed."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:170
+#: c:\user-sync/user-sync.php:324
 msgid "There was a connection problem. Please check the URL and Key of the Master site."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:189
+#: c:\user-sync/user-sync.php:344
 msgid "Subsite and Settings were successfully removed from the Central site!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:197
+#: c:\user-sync/user-sync.php:353
 msgid "Synchronization of all Subsites completed."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:720
-msgid "Site Type"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:721
-msgid "User sync works by making one site a 'Master' site and all other sites 'Sub'."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:722
-msgid "If you want to sync all the users from this site with other sites, make this a Master site."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:723
-msgid "However, if you want to sync the users from other sites to this site, make this a Sub site."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:724
-msgid "You can always change these options later by deactivating and then reactivating the plugin."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:725
-msgid "NB: You must have at least one Master site!"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:727
-#: c:\user-sync/user-sync.php:821
-#: c:\user-sync/user-sync.php:939
-msgid "For detailed 'how to use' instructions refer to:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:728
-#: c:\user-sync/user-sync.php:822
-#: c:\user-sync/user-sync.php:940
-msgid "WordPress User Synchronization Installation and Use instructions."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:736
-msgid "Make this site the Master site"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:737
-msgid "Make this a Sub site"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:757
-msgid "Please write URL of Central blog"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:762
-msgid "Please write Key of Central blog"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:771
-msgid "Subsite Settings"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:772
-msgid "All user data from the Master site will be synchronized with this site."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:777
-#: c:\user-sync/user-sync.php:915
-msgid "URL of Master site:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:785
-msgid "Key of Master site:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:794
-msgid "Default settings:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:798
-msgid "You can change these settings later on the Master site."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:803
-#: c:\user-sync/user-sync.php:993
-msgid "Do not replace deleted users"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:808
-#: c:\user-sync/user-sync.php:998
-msgid "Don't overwrite any existing users (add them as extra users)"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:815
-#: c:\user-sync/user-sync.php:934
-msgid "Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:818
-msgid "Click on 'Remove all settings' to disconnect syncing with Master site."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:828
-msgid "Connect this site to the Master site, and do a FULL synchronization"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:833
-msgid "Remove all settings"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:910
-msgid "Master Site Settings"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:911
-msgid "All user data from this master site will be synchronized with connected subsites."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:923
-msgid "Security Key:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:933
-msgid "To create a sub site, simply install this plugin at the sub site, activate it, make that site a 'Sub' site and enter the URL (including http) and the key supplied here."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:935
-msgid "Adding new user, or making any changes to user or their details, in the Master site are automatically synced to subsites."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:936
-msgid "'Sync all sites now' is used if you edit a subsite setting and need to update users."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:937
-msgid "To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on \"Remove all settings\" button or simple deactivate the plugin."
-msgstr ""
-
-#: c:\user-sync/user-sync.php:943
-msgid "Registered Subsites:"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:952
-msgid "URLs"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:955
-msgid "Last Sync"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:958
-msgid "Settings"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:961
-msgid "Action"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:1018
-msgid "Sync all sites now"
 msgstr ""
 

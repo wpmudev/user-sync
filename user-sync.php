@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.0 Beta 6.1
+Version: 1.0 Beta 7
 Author: Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -45,6 +45,7 @@ class User_Sync {
     var $plugin_dir;
     var $plugin_url;
     var $error;
+    var $options;
 
     function User_Sync() {
         __construct();
@@ -72,7 +73,7 @@ class User_Sync {
         }
 
         // Check for safe mode
-        if( ini_get( 'safe_mode' ) ) {
+        if ( ini_get( 'safe_mode' ) ) {
             //notice for safe mode
             $this->safe_mode_notice = __( "NOTE: Your server works in the 'Safe Mode' - If you have a large number of users for sync and your php settings are of little value for 'max_execution_time' it can cause problems with connection of subsites and full sinchronization.", 'user-sync' );
         } else {
@@ -80,26 +81,22 @@ class User_Sync {
             set_time_limit(0);
         }
 
-        if( isset( $_POST[ 'user_sync_settings' ] ) )
-            add_action( 'admin_init', array( &$this, 'add_settings' ) );
+
+        add_action( 'admin_init', array( &$this, 'admin_init' ) );
+
+        //rewrite old options from old version of plugin
+        $this->rewrite_options();
+        $this->options = $this->get_options();
 
         add_action( 'admin_head', array( &$this, 'add_css' ) );
         add_action( 'admin_menu', array( &$this, 'admin_page' ) );
 
         //actions only for master site
-        if ( "central" == get_option( 'user_sync_status' ) ) {
+        if ( "central" == $this->options['status'] ) {
             add_action( 'profile_update', array( &$this, 'user_change_data' ) );
-            add_action( 'user_register', array( &$this, 'user_create' ) );
+            add_action( 'user_register', array( &$this, 'user_change_data' ) );
             add_action( 'delete_user', array( &$this, 'user_delete_data' ) );
         }
-
-        //turn on debug mode
-        if ( "1" == get_option( 'user_sync_debug' ) ) {
-            $this->debug_mode = 1;
-        }
-
-        register_deactivation_hook ( __FILE__, array( &$this, 'deactivation' ) );
-
 
         add_action( 'wp_ajax_nopriv_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
         add_action( 'wp_ajax_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
@@ -118,7 +115,62 @@ class User_Sync {
      * Creating admin menu
      **/
     function admin_page() {
-        add_menu_page( __( 'User Sync', 'user-sync' ), __( 'User Sync', 'user-sync' ), 'manage_options', 'user-sync', array( &$this, 'main_page' ) );
+        add_menu_page( __( 'User Sync', 'user-sync' ), __( 'User Sync', 'user-sync' ), 'manage_options', 'user-sync', array( &$this, 'plugin_page' ), $this->plugin_url . 'images/icon.png' );
+    }
+
+
+    /**
+     * set options
+     **/
+    function set_options( $section, $values ) {
+        $options = get_option( 'user_sync_options' );
+        $options[$section] = $values;
+        update_option( "user_sync_options", $options );
+        $this->options = $this->get_options();
+    }
+
+    /**
+     * get options
+     **/
+    function get_options() {
+       return $options = get_option( 'user_sync_options' );
+    }
+
+    /**
+     * Rewrite plugin option from old version
+     **/
+    function rewrite_options() {
+        //user_sync_status
+        //user_sync_key
+        //user_sync_sub_urls
+        //user_sync_deleted_users
+        //user_sync_debug
+        //user_sync_url_c
+
+        if ( get_option( "user_sync_status" ) ) {
+            $this->set_options( "status", get_option( "user_sync_status" ) );
+//            delete_option( 'user_sync_status' );
+        }
+
+        if ( get_option( "user_sync_key" ) ) {
+            $this->set_options( "key", get_option( "user_sync_key" ) );
+//            delete_option( 'user_sync_key' );
+        }
+
+        if ( get_option( "user_sync_sub_urls" ) ) {
+            $this->set_options( "sub_urls", get_option( "user_sync_sub_urls" ) );
+//            delete_option( 'user_sync_sub_urls' );
+        }
+
+        if ( get_option( "user_sync_url_c" ) ) {
+            $this->set_options( "central_url", get_option( "user_sync_url_c" ) );
+//            delete_option( 'user_sync_url_c' );
+        }
+
+        if ( get_option( "user_sync_deleted_users" ) ) {
+            $this->set_options( "deleted_users", get_option( "user_sync_deleted_users" ) );
+//            delete_option( 'user_sync_deleted_users' );
+        }
     }
 
 
@@ -126,8 +178,8 @@ class User_Sync {
      * Write log
      **/
     function write_log( $message ) {
-        if ( isset( $this->debug_mode ) && 1 == $this->debug_mode ) {
-            if ( "central" == get_option( 'user_sync_status' ) )
+        if ( '1' == $this->options['debug_mode'] ) {
+            if ( "central" == $this->options['status'] )
                 $site_type = "[C] ";
             else
                 $site_type = "[S] ";
@@ -162,13 +214,13 @@ class User_Sync {
                 z-index: 1099;
                 display: none;
             }
-
+/*
             #toplevel_page_user-sync
             .wp-menu-image a img{
                 display: none;
-            }
+            }     */
 
-           #toplevel_page_user-sync
+/*           #toplevel_page_user-sync
            div.wp-menu-image{
                 background: url("<?php echo $this->plugin_url ?>images/user-sync.png") no-repeat scroll 0px 0px transparent;
             }
@@ -182,7 +234,7 @@ class User_Sync {
             div.wp-menu-image{
                 background: url("<?php echo $this->plugin_url ?>images/user-sync.png") no-repeat scroll 0px -32px transparent;
             }
-
+                         */
             .debug_message {
                 background-color: #FFFFE0;
                 border-style: solid;
@@ -201,6 +253,7 @@ class User_Sync {
                 width:320px;
                 padding:25px;
                 color:#fff;
+                z-index: 1000;
             }
 
             /* tooltip styling. by default the element to be styled is .tooltip  */
@@ -213,113 +266,119 @@ class User_Sync {
     }
 
     /**
-     * Set site settings
+     * plugin actions
      **/
-    function add_settings() {
-        switch( $_POST['user_sync_settings'] ) {
-            //Saving choose of site "Central" or "Subsite"
-            case "type_site":
-                //creating additional options for central site
-                if ( "central" == $_POST['user_sync_status'] ) {
-                    add_option( "user_sync_status", $_POST['user_sync_status'], '', 'no' );
-                    add_option( "user_sync_key", $this->gener_key(), '', 'no' );
-                    add_option( "user_sync_sub_urls", "", '', 'no' );
-                }
-
-                //creating additional options for sub site
-                if ( "sub" == $_POST['user_sync_status'] ) {
-                    add_option( "user_sync_status", $_POST['user_sync_status'], '', 'no' );
-                    add_option( "user_sync_deleted_users", "", '', 'no' );
-                }
-
-                //set debug mode
-                if ( isset ( $_POST['debug'] ) && '1' == $_POST['debug'] )
-                    add_option( "user_sync_debug", "1", '', 'no' );
-            break;
-
-            //Creating additional options of Subsite and Saving URL of Central site and Security Key
-            case "sub_site":
-                if ( ! empty( $_POST['user_sync_url_c']) && ! empty( $_POST['user_sync_key'] ) ) {
-
-                if ( false === get_option( 'user_sync_url_c' ) )
-                    add_option( "user_sync_url_c", $_POST['user_sync_url_c'], '', 'no' );
-                else
-                    update_option( "user_sync_url_c", $_POST['user_sync_url_c'] );
-
-                if ( false === get_option( 'user_sync_key' ) )
-                    add_option( "user_sync_key", $_POST['user_sync_key'], '', 'no' );
-                else
-                    update_option( "user_sync_key", $_POST['user_sync_key'] );
-
-
-                    //Call Synchronization when activating new Subsite
-                    $result = $this->sync_new_subsite( $_POST['user_sync_url_c'], $_POST['user_sync_key'] );
-
-                    if ( "ok" == $result ) {
-                        wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite successfully connected to Master site and Synchronization completed.', 'user-sync' ) ) ), 'admin.php' ) );
-                    } else {
-                        update_option( "user_sync_url_c", "" );
-                        update_option( "user_sync_key", "" );
-
-                        wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'There was a connection problem. Please check the URL and Key of the Master site.', 'user-sync' ) ) ), 'admin.php' ) );
+    function admin_init() {
+        if ( isset( $_POST['usync_action'] ) )
+            switch( $_POST['usync_action'] ) {
+                //Saving choose of site "Central" or "Subsite"
+                case "install":
+                    //creating additional options for central site
+                    if ( "central" == $_POST['user_sync_status'] ) {
+                        $this->set_options( 'status', $_POST['user_sync_status'] );
+                        $this->set_options( 'key', $this->gener_key() );
+                        $this->set_options( 'sub_urls', '' );
                     }
-                }
-            break;
 
-            //Removing Subsite from Central list
-            case "remove_settings":
-                $p = base64_encode( get_option( 'siteurl' ) );
+                    //creating additional options for sub site
+                    if ( "sub" == $_POST['user_sync_status'] ) {
+                        $this->set_options( 'status', $_POST['user_sync_status'] );
+                        $this->set_options( 'key', '' );
+                        $this->set_options( 'central_url', '' );
+                        $this->set_options( 'deleted_users', '' );
+                    }
 
-                $hash = md5( $p . get_option( 'user_sync_key' ) );
+                    //set debug mode
+                    if ( isset ( $_POST['debug'] ) && '1' == $_POST['debug'] )
+                        $this->set_options( 'debug_mode', '1' );
 
-                //delete url from Sub list on central site
-                $this->user_sync_send_request( get_option( 'user_sync_url_c' ), "user_sync_action=delete_subsite&hash=". $hash . "&p=" . $p );
+                    wp_redirect( add_query_arg( array( 'page' => 'user-sync'), 'admin.php' ) );
+                    exit;
+                break;
 
-                //reset options of Sub site
-                update_option( "user_sync_url_c", "" );
-                update_option( "user_sync_key", "" );
-                update_option( "user_sync_deleted_users", "" );
+                //delete all plugin options
+                case "uninstall":
+                    $this->uninstall( );
+                    wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( "Options are deleted!", 'user-sync' ) ) ), 'admin.php' ) );
+                    exit;
+                break;
 
-                wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite and Settings were successfully removed from the Central site!', 'user-sync' ) ) ), 'admin.php' ) );
-            break;
+                //Creating additional options of Subsite and Saving URL of Central site and Security Key
+                case "sub_site":
+                    if ( ! empty( $_POST['user_sync_url_c']) && ! empty( $_POST['user_sync_key'] ) ) {
 
-            //Call function for Synchronization of all Subsites
-            case "sync_all":
+                        $this->set_options( 'central_url', $_POST['user_sync_url_c'] );
+                        $this->set_options( 'key', $_POST['user_sync_key'] );
 
-                $this->sync_all_subsite();
 
-                wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Synchronization of all Subsites completed.', 'user-sync' ) ) ), 'admin.php' ) );
-            break;
-        }
+                        //Call Synchronization when activating new Subsite
+                        $result = $this->sync_new_subsite( $_POST['user_sync_url_c'], $_POST['user_sync_key'] );
+
+                        if ( "ok" == $result ) {
+                            wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite successfully connected to Master site and Synchronization completed.', 'user-sync' ) ) ), 'admin.php' ) );
+                            exit;
+                        } else {
+                            $this->set_options( 'central_url', '' );
+                            $this->set_options( 'key', '' );
+
+                            wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'There was a connection problem. Please check the URL and Key of the Master site.', 'user-sync' ) ) ), 'admin.php' ) );
+                            exit;
+                        }
+                    }
+                break;
+
+                //Removing Subsite from Central list
+                case "remove_settings":
+                    $p = base64_encode( get_option( 'siteurl' ) );
+
+                    $hash = md5( $p . $this->options['key'] );
+
+                    //delete url from Sub list on central site
+                    $this->user_sync_send_request( $this->options['central_url'], "user_sync_action=delete_subsite&hash=". $hash . "&p=" . $p );
+
+                    //reset options of Sub site
+                    $this->set_options( 'central_url', '' );
+                    $this->set_options( 'key', '' );
+                    $this->set_options( 'deleted_users', '' );
+
+                    wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite and Settings were successfully removed from the Central site!', 'user-sync' ) ) ), 'admin.php' ) );
+                    exit;
+                break;
+
+                //Call function for Synchronization of all Subsites
+                case "sync_all":
+
+                    $this->sync_all_subsite();
+
+                    wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Synchronization of all Subsites completed.', 'user-sync' ) ) ), 'admin.php' ) );
+                    exit;
+                break;
+            }
 
     }
 
     /**
-     * Deleting options and Sub url when deactivation plugin
+     * Deleting options and Sub url
      **/
-    function deactivation() {
+    function uninstall() {
         //check type of blog
-        if ( "sub" == get_option( 'user_sync_status' ) ) {
+        if ( "sub" == $this->options['status'] && '' != $this->options['key'] && '' != $this->options['central_url'] ) {
             $p = base64_encode( get_option( 'siteurl' ) );
 
-            $hash = md5( $p . get_option( 'user_sync_key' ) );
+            $hash = md5( $p . $this->options['key'] );
 
             //delete url from Sub list on central site
-            $this->user_sync_send_request( get_option( 'user_sync_url_c' ), "user_sync_action=delete_subsite&hash=". $hash . "&p=" . $p );
+            $this->user_sync_send_request( $this->options['central_url'], "user_sync_action=delete_subsite&hash=". $hash . "&p=" . $p );
         }
 
-        delete_option( 'user_sync_key' );
-        delete_option( 'user_sync_sub_urls' );
-        delete_option( 'user_sync_status' );
-        delete_option( 'user_sync_url_c' );
-        delete_option( 'user_sync_deleted_users' );
+        delete_option( 'user_sync_options' );
     }
 
     /**
      * Editing settings of Sub site
      **/
     function user_sync_edit_settings() {
-        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+        $user_sync_sub_urls = $this->options['sub_urls'];
 
         $array_id = $this->get_index_by_url( base64_decode($_REQUEST['url']), $user_sync_sub_urls );
 
@@ -330,7 +389,7 @@ class User_Sync {
             if ( "0" == $_POST['overwrite_user'] || "1" == $_POST['overwrite_user'] )
                 $user_sync_sub_urls[$array_id]['param']['overwrite_user'] = $_POST['overwrite_user'];
 
-            update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+            $this->set_options( 'sub_urls', $user_sync_sub_urls );
         }
     }
 
@@ -365,7 +424,8 @@ class User_Sync {
         } else {
             //writing some information in the plugin log file
             $this->write_log( "03 - sending request - response={$response["body"]};;" );
-
+//            var_dump($response["body"]);
+//            exit;
             return $response["body"];
         }
 
@@ -461,7 +521,7 @@ class User_Sync {
      *  Synchronization user
      **/
     function sync_user( $users_id, $urls ) {
-        $key        = get_option( 'user_sync_key' );
+        $key        = $this->options['key'];
         $urls       = (array) $urls;
         $users_id   = (array) $users_id;
 
@@ -485,32 +545,20 @@ class User_Sync {
                     $this->user_sync_send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p );
 
                     //Update last Sync date
-                    $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+                    $user_sync_sub_urls = $this->options['sub_urls'];
                     $array_id = $this->get_index_by_url( $one['url'], $user_sync_sub_urls );
                     $user_sync_sub_urls[$array_id]['last_sync'] = date( "m.d.y G:i:s" );
-                    update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+                    $this->set_options( 'sub_urls', $user_sync_sub_urls );
                 }
         }
-    }
-
-    /**
-     * Synchronization when new user creating
-     **/
-    function user_create( $userID ) {
-        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
-
-        //Call Synchronization function with ID of created user and array of all Subsite URLs
-        $this->sync_user( $userID, $user_sync_sub_urls );
     }
 
     /**
      * Synchronization when user edit profile
      **/
     function user_change_data( $userID ) {
-        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
-
         //Call Synchronization function with ID of changed user and array of all Subsite URLs
-        $this->sync_user( $userID, $user_sync_sub_urls );
+        $this->sync_user( $userID, $this->options['sub_urls'] );
     }
 
     /**
@@ -519,19 +567,19 @@ class User_Sync {
     function user_delete_data( $userID ) {
         $user_data = (array) get_userdata( $userID );
 
-        $user_sync_status = get_option( 'user_sync_status' );
+        $user_sync_status = $this->options['status'];
 
         if ( "sub" == $user_sync_status ) {
             //Adding login of user to list of deleted users on Sub site
-            $user_sync_deleted_users = (array) get_option( 'user_sync_deleted_users' );
+            $user_sync_deleted_users = (array) $this->options['deleted_users'];
 
             if ( false === array_search( $user_data['user_login'], $user_sync_deleted_users ) ) {
                 $user_sync_deleted_users[] = $user_data['user_login'];
-                update_option( "user_sync_deleted_users", $user_sync_deleted_users );
+                $this->set_options( 'deleted_users', $user_sync_deleted_users );
             }
         } elseif ( "central" == $user_sync_status ) {
-            $key                = get_option( 'user_sync_key' );
-            $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+            $key                = $this->options['key'];
+            $user_sync_sub_urls = $this->options['sub_urls'];
 
 
             //Deleting user from all Subsite
@@ -548,10 +596,10 @@ class User_Sync {
                         $this->user_sync_send_request( $one['url'], "user_sync_action=sync_user_delete&hash=". $hash . "&p=" . $p );
 
                         //Update last Sync date
-                        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+                        $user_sync_sub_urls = $this->options['sub_urls'];
                         $array_id = $this->get_index_by_url( $one['url'], $user_sync_sub_urls );
                         $user_sync_sub_urls[$array_id]['last_sync'] = date( "m.d.y G:i:s" );
-                        update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+                        $this->set_options( 'sub_urls', $user_sync_sub_urls );
                     }
                 }
         }
@@ -565,10 +613,10 @@ class User_Sync {
         $overwrite_user = 0;
 
         //Settings of Sub site
-        if ( "1" == $_POST['replace_user'] )
+        if ( isset( $_POST['replace_user'] ) && "1" == $_POST['replace_user'] )
             $replace_user = 1;
 
-        if ( "1" == $_POST['overwrite_user'] )
+        if ( isset( $_POST['overwrite_user'] ) && "1" == $_POST['overwrite_user'] )
             $overwrite_user = 1;
 
         $p = array ('url' => get_option( 'siteurl' ), 'replace_user' => $replace_user, 'overwrite_user' => $overwrite_user );
@@ -592,31 +640,37 @@ class User_Sync {
         //Get all users ID
         $user_sync_users_id = $this->user_sync_get_all_users_id();
 
-        //Get all URLs of Subsites
-        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
-
         //Call Synchronization for all Subsites
-        $this->sync_user( $user_sync_users_id, $user_sync_sub_urls );
+        $this->sync_user( $user_sync_users_id, $this->options['sub_urls'] );
     }
 
     /**
      * Ajax function for changes data on remote site
      **/
     function user_sync_ajax_action() {
-        $user_sync_key = get_option( "user_sync_key" );
+        $user_sync_key = $this->options['key'];
+        //writing some information in the plugin log file
+        $this->write_log( "0-10 - ajax actions" );
 
-        if ( false === $user_sync_key )
+        if ( false === $user_sync_key ) {
+            //writing some information in the plugin log file
+            $this->write_log( "1-10 - key not exist" );
             die( "" );
+        }
+
 
         //action for checking security key on Subsite
-        if ( "" != $_REQUEST['str'] ) {
+        if ( isset ( $_REQUEST['str'] ) && "" != $_REQUEST['str'] ) {
             die( md5( $_REQUEST['str'] . $user_sync_key ) );
         }
 
-        if ( "" == $_REQUEST['user_sync_action'] )
+        if ( isset ( $_REQUEST['user_sync_action'] ) && "" == $_REQUEST['user_sync_action'] ) {
+            //writing some information in the plugin log file
+            $this->write_log( "2-10 - user_sync_action not exist" );
             die( "" );
+        }
 
-        if ( "" != $_REQUEST['p'] && "" != $_REQUEST['hash'] ) {
+        if ( isset ( $_REQUEST['p'] ) && "" != $_REQUEST['p'] && isset ( $_REQUEST['hash'] ) && "" != $_REQUEST['hash'] ) {
             //checking hash sum
             if ( $_REQUEST['hash'] == md5( $_REQUEST['p'] . $user_sync_key ) ) {
                 $p = base64_decode( $_REQUEST['p'] );
@@ -627,9 +681,14 @@ class User_Sync {
                     //action for Synchronization user
                     case "sync_user":
                         $p = unserialize( $p );
+                        //writing some information in the plugin log file
+                        $this->write_log( "5-10 - start sync_user" );
 
                         $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] ) );
-                        $user_sync_id = $user_sync_id['0']->ID;
+                        if ( isset( $user_sync_id['0'] ) )
+                            $user_sync_id = $user_sync_id['0']->ID;
+                        else
+                            $user_sync_id = false;
 
                         if( $user_sync_id ) {
                             //Update user
@@ -641,7 +700,10 @@ class User_Sync {
                             if ( 1 == $p['param']['overwrite_user'] && "1" != get_user_meta( $user_sync_id, "user_sync", true ) ) {
 
                                 $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] . "_sync" ) );
-                                $user_sync_id = $user_sync_id['0']->ID;
+                                if ( isset( $user_sync_id['0'] ) )
+                                    $user_sync_id = $user_sync_id['0']->ID;
+                                else
+                                    $user_sync_id = false;
 
                                 //if user exist we have new ID in $user_sync_id and we can use code below for Update user data
                                 if( ! $user_sync_id ) {
@@ -663,7 +725,9 @@ class User_Sync {
                                     $user_sync_pass  = array_splice( $p['userdata'], 1, 1 );
 
                                     //Insert new user
-                                    $user_sync_last_id = wp_update_user ( $p['userdata'] );
+                                    //TODO: try use real password
+                                    $p['userdata']['user_pass'] = '';
+                                    $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                                     //adding user password back for updating it
                                     $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
@@ -691,7 +755,8 @@ class User_Sync {
                                 $p['userdata']['user_email'] = "temp@temp.temp";
 
                             //update user data
-                            $user_sync_last_id = wp_update_user ( $p['userdata'] );
+                            $p['userdata']['user_pass'] = '';
+                            $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                             //adding user password back for updating it
                             $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
@@ -708,12 +773,12 @@ class User_Sync {
                             $this->write_log( "15 - insert user - step 1" );
 
                             if ( 1 == $p['param']['replace_user'] ) {
-                                $user_sync_deleted_users = get_option( 'user_sync_deleted_users' );
+                                $user_sync_deleted_users = $this->options['deleted_users'];
 
                                 //writing some information in the plugin log file
                                 $this->write_log( "16 - do not replace deleted users" );
 
-                                if ( false !== array_search( $p['userdata']['user_login'], $user_sync_deleted_users ) )
+                                if ( is_array( $user_sync_deleted_users ) && false !== array_search( $p['userdata']['user_login'], $user_sync_deleted_users ) )
                                     return;
                             }
 
@@ -731,7 +796,8 @@ class User_Sync {
                                 $p['userdata']['user_email'] = "temp@temp.temp";
 
                             //Insert new user
-                            $user_sync_last_id = wp_update_user ( $p['userdata'] );
+                            $p['userdata']['user_pass'] = '';
+                            $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                             //adding user password back for updating it
                             $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
@@ -782,7 +848,7 @@ class User_Sync {
                     case "sync_new_subsite":
                         $p = unserialize( $p );
 
-                        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+                        $user_sync_sub_urls = $this->options['sub_urls'];
 
                         $p = array (
                                 'url' => $p['url'],
@@ -796,11 +862,11 @@ class User_Sync {
                         if ( is_array( $user_sync_sub_urls ) ) {
                             if ( -1 ==  $this->get_index_by_url( $p['url'], $user_sync_sub_urls ) ) {
                                  $user_sync_sub_urls[] = $p;
-                                 update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+                                 $this->set_options( 'sub_urls', $user_sync_sub_urls );
                             }
                         } else {
                             $user_sync_sub_urls[] = $p;
-                            update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+                            $this->set_options( 'sub_urls', $user_sync_sub_urls );
                         }
 
                         //Get all users ID
@@ -810,39 +876,44 @@ class User_Sync {
                         $this->write_log( "07 - add new sub site" );
                         $this->write_log( "08 - count of users= ". count( $user_sync_users_id ) . ";;" );
 
-                        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+                        $user_sync_sub_urls = $this->options['sub_urls'];
 
                         $array_id = $this->get_index_by_url( $p['url'], $user_sync_sub_urls );
 
                         //Call Synchronization user function
-                        $this->sync_user( $user_sync_users_id, array($user_sync_sub_urls[$array_id]) );
+                        $this->sync_user( $user_sync_users_id, array( $user_sync_sub_urls[$array_id] ) );
 
                         die( "ok" );
                     break;
 
                     //action for deleting Subsite URL from Central site
                     case "delete_subsite":
-                        $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
+                        $user_sync_sub_urls = $this->options['sub_urls'];
 
                         $array_id = $this->get_index_by_url( $p, $user_sync_sub_urls );
 
                         if ( -1 != $array_id ) {
                             array_splice( $user_sync_sub_urls, $array_id, 1 );
 
-                            update_option( "user_sync_sub_urls", $user_sync_sub_urls );
+                            $this->set_options( 'sub_urls', $user_sync_sub_urls );
                         }
 
                         die( "ok" );
                     break;
                 }
+
             }
+            //writing some information in the plugin log file
+            $this->write_log( "4-10 - hash sum error" );
         }
+        //writing some information in the plugin log file
+        $this->write_log( "3-10 - p or hash not set" );
     }
 
     /**
      *  Tempalate of pages
      **/
-    function main_page() {
+    function plugin_page() {
         global $wpdb;
 
         //Display status message
@@ -850,378 +921,20 @@ class User_Sync {
             ?><br /><br /><div id="message" class="updated fade"><p><?php _e( urldecode( $_GET['dmsg']), 'user-sync' ) ?></p></div><?php
         }
 
-        $user_sync_status = get_option( 'user_sync_status' );
+        switch( $this->options['status'] ) {
+            case "sub":
+                require_once( $this->plugin_dir . "page-sub.php" );
+            break;
 
-        if ( false == ( $user_sync_status ) ) {
-        ?>
-            <script type="text/javascript">
-                jQuery( document ).ready( function() {
-                    jQuery.fn.makeChose = function ( id ) {
-                        if ( 1 == id )
-                            jQuery( "#user_sync_status" ).val( 'central' );
-                        else
-                            jQuery( "#user_sync_status" ).val( 'sub' );
+            case "central":
+                require_once( $this->plugin_dir . "page-central.php" );
+            break;
 
-                        jQuery( "#user_sync_form" ).submit();
-                    };
-                });
-            </script>
-
-            <div class="wrap">
-                <h2><?php _e( 'Site Type', 'user-sync' ) ?></h2>
-                <p><?php _e( "User sync works by making one site a 'Master' site and all other sites 'Sub'.", 'user-sync' ) ?></p>
-                <p><?php _e( 'If you want to sync all the users from this site with other sites, make this a Master site.', 'user-sync' ) ?></p>
-                <p><?php _e( 'However, if you want to sync the users from other sites to this site, make this a Sub site.', 'user-sync' ) ?></p>
-                <p><?php _e( 'You can always change these options later by deactivating and then reactivating the plugin.', 'user-sync' ) ?></p>
-                <p><?php _e( 'NB: You must have at least one Master site!', 'user-sync' ) ?></p>
-                <p>
-                    <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
-                    <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
-                </p>
-
-                <?php
-                //safe mode notice
-                if ( isset(  $this->safe_mode_notice ) ) {
-                   echo '<div id="message" class="error fade"><p> '. $this->safe_mode_notice . '</p></div>';
-                }
-                ?>
-
-                <form method="post" action="" id="user_sync_form">
-                    <input type="hidden" name="user_sync_settings" value="type_site" />
-                    <input type="hidden" name="user_sync_status" id="user_sync_status" value="" />
-                    <table class="form-table">
-                        <tr valign="top">
-                            <td>
-                                <div class="debug_message" >
-
-                                    <?php _e( 'Note: If you have any problems with sync users you can use debug mode for writing some operations in the log file. You need open folder "/plugins/user-sync/log/" for writing. What do with log files you can read in instruction of plugin', 'user-sync' );  ?>
-                                    <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'here', 'user-sync' ) ?></a>
-                                    <br />
-                                    <input type="checkbox" name="debug" id="debug" value="1" />
-                                    <label for="debug"><?php _e( 'Use Debug Mode', 'user-sync' ) ?></label>
-
-                                </div>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <td>
-                            <input type="button" value="<?php _e( 'Make this site the Master site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 1 );" />
-                            <input type="button" value="<?php _e( 'Make this a Sub site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 2 );" />
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-        <?php
-
-        } elseIf ( "sub" == $user_sync_status ) {
-            $user_sync_key   = get_option( 'user_sync_key' );
-            $user_sync_url_c = get_option( 'user_sync_url_c' );
-
-            if ( "" != $user_sync_url_c )
-                $disabled = 'readonly="readonly"';
-
-        ?>
-            <script type="text/javascript">
-                jQuery( document ).ready( function() {
-                    jQuery( "#user_sync_form" ).submit( function () {
-                        if ( "" == jQuery( "#user_sync_url_c" ).val() ) {
-                            alert( "<?php _e( 'Please write URL of Central blog', 'user-sync' ) ?>" );
-                            return false;
-                        }
-
-                        if ( "" == jQuery( "#user_sync_key" ).val() ) {
-                            alert( "<?php _e( 'Please write Key of Central blog', 'user-sync' ) ?>" );
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    jQuery(".tooltip_img[title]").tooltip();
-
-                });
-
-
-            </script>
-            <div class="wrap">
-                <h2><?php _e( 'Subsite Settings', 'user-sync' ) ?></h2>
-                <h3><?php _e( 'All user data from the Master site will be synchronized with this site.', 'user-sync' ) ?></h3>
-                <form method="post" action="" id="user_sync_form">
-                    <table class="form-table">
-                        <tr valign="top">
-                            <th scope="row">
-                                <?php _e( 'URL of Master site:', 'user-sync' ) ?>
-                            </th>
-                            <td>
-                                <input type="text" name="user_sync_url_c" id="user_sync_url_c" value="<?php echo $user_sync_url_c; ?>" size="70" <?php echo $disabled; ?> />
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row">
-                                <?php _e( 'Key of Master site:', 'user-sync' ) ?>
-                            </th>
-                            <td>
-                                <input type="text" name="user_sync_key" id="user_sync_key" value="<?php echo $user_sync_key; ?>" size="30" <?php echo $disabled; ?> />
-                            </td>
-                        </tr>
-                    <?php if ( "" == $disabled ) {?>
-                        <tr valign="top">
-                            <th scope="row">
-                                <?php _e( 'Default settings:', 'user-sync' ) ?>
-                            </th>
-                            <td>
-                                <span class="description">
-                                    <?php _e( 'You can change these settings later on the Master site.', 'user-sync' ) ?>
-                                </span>
-                                <br />
-                                <label>
-                                    <input type="checkbox" name="replace_user" value="1" />
-                                    <?php _e( 'Do not replace deleted users', 'user-sync' ) ?>
-                                </label>
-                                <br />
-                                <label>
-                                    <input type="checkbox" name="overwrite_user" value="1" />
-                                    <?php _e( 'Don\'t overwrite any existing users (add them as extra users)', 'user-sync' ) ?>
-                                </label>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                    </table>
-                    <?php if ( "" == $disabled ) {?>
-                        <p><?php _e( "Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite.", 'user-sync' ) ?></p>
-                    <?php } else {?>
-                        <br />
-                        <p><?php _e( "Click on 'Remove all settings' to disconnect syncing with Master site.", 'user-sync' ) ?></p>
-                    <?php } ?>
-                    <p>
-                        <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
-                        <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
-                    </p>
-
-                    <?php if ( "" == $disabled ) {?>
-                        <?php
-                        //safe mode notice
-                        if ( isset( $this->safe_mode_notice ) ):?>
-                            <span style="color: red;" ><?php _e( 'Attantion: Safe Mode!', 'user-sync' ); ?></span>
-                            <img class="tooltip_img" src="<?php echo $this->plugin_url . "images/"; ?>info_small.png" title="<?php echo $this->safe_mode_notice; ?>"/>
-                            <br />
-                        <?php endif; ?>
-                        <p class="submit">
-                            <input type="hidden" name="user_sync_settings" value="sub_site" />
-                            <input type="submit" value="<?php _e( 'Connect this site to the Master site, and do a FULL synchronization', 'user-sync' ) ?>" />
-                        </p>
-
-                    <?php } else {?>
-                        <p class="submit">
-                            <input type="hidden" name="user_sync_settings" value="remove_settings" />
-                            <input type="submit" value="<?php _e( 'Remove all settings', 'user-sync' ) ?>" />
-                        </p>
-                    <?php } ?>
-                </form>
-            </div>
-        <?php
-
-        } elseIf ( "central" == $user_sync_status ) {
-            $user_sync_key      = get_option( 'user_sync_key' );
-            $user_sync_sub_urls = get_option( 'user_sync_sub_urls' );
-            $user_sync_siteur = get_option( 'siteurl' );
-
-        ?>
-            <script type="text/javascript">
-                jQuery( document ).ready( function() {
-                    jQuery.fn.editSettings = function ( id ) {
-
-                        if ( "Save" == jQuery( this ).val() ) {
-                            jQuery( this ).attr( 'disabled', true );
-
-                            var sub_url = jQuery( "#sub_url_" + id ).val();
-
-                            if (true == jQuery( "#replace_user_" + id ).attr( 'checked' ) )
-                                replace_user = 1;
-                            else
-                                replace_user = 0;
-
-                            if (true == jQuery( "#overwrite_user_" + id ).attr( 'checked' ) )
-                                overwrite_user = 1;
-                            else
-                                overwrite_user = 0;
-                            jQuery( "#loading_" + id ).show();
-                            jQuery.ajax({
-                               type: "POST",
-                               url: "<?php echo $user_sync_siteur;?>/wp-admin/admin-ajax.php",
-                               data: "action=user_sync_settings&url=" + sub_url + "&replace_user=" + replace_user + "&overwrite_user=" + overwrite_user,
-                               success: function(){
-                                 jQuery( "input[value=Save]" ).val( 'Edit' );
-                                 jQuery( "input[value=Edit]" ).attr( 'disabled', false );
-                                 jQuery( "#loading_" + id ).hide();
-                               }
-                             });
-                            jQuery( "#sub_list input.sett" ).attr( 'disabled', true );
-                            jQuery( "#sub_list label" ).attr( 'class', 'description' );
-
-                            return;
-
-                        }
-
-                        jQuery( "#sub_list input.sett" ).attr( 'disabled', true );
-                        jQuery( "#sub_list label" ).attr( 'class', 'description' );
-
-                        if ( "Edit" == jQuery( this ).val() ) {
-                            jQuery( "#settings_" + id + " input" ).attr( 'disabled', false );
-                            jQuery( "#settings_" + id + " label" ).attr( 'class', '' );
-                            jQuery( this ).val('Close');
-                            jQuery( "input[value=Edit]" ).attr( 'disabled', true );
-                            return;
-                        }
-
-                        if ( "Close" == jQuery( this ).val() ) {
-                            jQuery( this ).val('Edit');
-                            jQuery( "input[value=Edit]" ).attr( 'disabled', false );
-                            return;
-                        }
-                    };
-
-                    jQuery( "#sub_list label" ).click(function () {
-                        if ( ! jQuery( this ).find( 'input.sett' ).attr( 'disabled' ) ) {
-                            jQuery( "input[value=Close]" ).val( 'Save' );
-                        }
-
-                    });
-
-
-                    jQuery(".tooltip_img[title]").tooltip();
-
-
-                });
-            </script>
-
-            <div class="wrap">
-                <h2><?php _e( 'Master Site Settings', 'user-sync' ) ?></h2>
-                <h3><?php _e( 'All user data from this master site will be synchronized with connected subsites.', 'user-sync' ) ?></h3>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">
-                            <?php _e( 'URL of Master site:', 'user-sync' ) ?>
-                        </th>
-                        <td>
-                            <input type="text" name=""  value="<?php echo $user_sync_siteur; ?>" readonly="readonly" size="50" />
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">
-                            <?php _e( 'Security Key:', 'user-sync' ) ?>
-                        </th>
-                        <td>
-                            <input type="text" name=""  value="<?php echo $user_sync_key; ?>" readonly="readonly" size="50" />
-                        </td>
-                    </tr>
-                </table>
-
-                <br />
-            </div>
-            <span class="description"><?php _e( "To create a sub site, simply install this plugin at the sub site, activate it, make that site a 'Sub' site and enter the URL (including http) and the key supplied here.", 'user-sync' ) ?></span>
-            <p><?php _e( 'Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite.', 'user-sync' ) ?></p>
-            <p><?php _e( 'Adding new user, or making any changes to user or their details, in the Master site are automatically synced to subsites.', 'user-sync' ) ?></p>
-            <p><?php _e( "'Sync all sites now' is used if you edit a subsite setting and need to update users.", 'user-sync' ) ?></p>
-            <p><?php _e( 'To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on "Remove all settings" button or simple deactivate the plugin.', 'user-sync' ) ?></p>
-            <p>
-                <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
-                <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
-            </p>
-
-            <?php
-            //safe mode notice
-            if ( isset( $this->safe_mode_notice ) ):?>
-                <p>
-                    <span style="color: red;" ><?php _e( 'Attantion: Safe Mode!', 'user-sync' ); ?></span>
-                    <img class="tooltip_img" src="<?php echo $this->plugin_url . "images/"; ?>info_small.png" title="<?php echo $this->safe_mode_notice; ?>"/>
-                </p>
-            <?php endif; ?>
-
-            <p><?php _e( 'Registered Subsites:', 'user-sync' ) ?></p>
-            <form method="post" action="" id="sub_list">
-                <table width="700px" class="widefat post fixed" style="width:95%;">
-                    <thead>
-                        <tr>
-                            <th style="width: 10px;">
-                                #
-                            </th>
-                            <th>
-                                <?php _e( 'URLs', 'user-sync' ) ?>
-                            </th>
-                            <th>
-                                <?php _e( 'Last Sync', 'user-sync' ) ?>
-                            </th>
-                            <th  style="width: 400px;">
-                                <?php _e( 'Settings', 'user-sync' ) ?>
-                            </th>
-                            <th>
-                                <?php _e( 'Action', 'user-sync' ) ?>
-                            </th>
-                        </tr>
-                    </thead>
-                <?php
-                $user_sync_i = 0;
-                if ( $user_sync_sub_urls )
-                    foreach( $user_sync_sub_urls as $one) {
-                        if ($user_sync_i % 2 == 0)
-                        {
-                            echo "<tr class='alternate'>";
-                        } else {
-                            echo "<tr class='' >";
-                        }
-                        $user_sync_i++;
-                ?>
-                        <td style="vertical-align: middle;">
-                           <?php echo $user_sync_i; ?>
-                        </td>
-                        <td style="vertical-align: middle;">
-                           <?php echo $one['url']; ?>
-                           <input type="hidden" id="sub_url_<?php echo $user_sync_i;?>"  value="<?php echo base64_encode($one['url']);?>"/>
-                        </td>
-                        <td style="vertical-align: middle;">
-                        <?php echo $one['last_sync']; ?>
-                        </td>
-                        <td style="vertical-align: middle;">
-
-                            <div class="settings_block" id="settings_<?php echo $user_sync_i;?>" >
-                                <div class="loading_image" id="loading_<?php echo $user_sync_i;?>" ></div>
-                                <label class="description" >
-                                    <input type="checkbox" class="sett" name="replace_user" id="replace_user_<?php echo $user_sync_i;?>" value="1" disabled="disabled" <?php if ( "1" == $one['param']['replace_user']) echo 'checked="checked"'; ?> />
-                                    <?php _e( 'Do not replace deleted users', 'user-sync' ) ?>
-                                </label>
-                                <br />
-                                <label class="description">
-                                    <input type="checkbox" class="sett" name="overwrite_user" id="overwrite_user_<?php echo $user_sync_i;?>" value="1" disabled="disabled" <?php if ( "1" == $one['param']['overwrite_user']) echo 'checked="checked"'; ?> />
-                                    <?php _e( 'Don\'t overwrite any existing users (add them as extra users)', 'user-sync' ) ?>
-                                </label>
-                            </div>
-                        </td>
-                        <td style="vertical-align: middle;">
-                        <input type="button" name="edit_button" id="actin_button_<?php echo $user_sync_i;?>" value="Edit" onclick="jQuery(this).editSettings( <?php echo $user_sync_i;?> );" />
-                        </td>
-                    </tr>
-                <?php
-                    }
-                ?>
-                </table>
-            </form>
-            <?php
-            if ( $user_sync_sub_urls )  {
-            ?>
-            <br />
-            <center>
-            <form method="post" action="">
-                <input type="hidden" name="user_sync_settings" value="sync_all" />
-                <input type="submit" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
-            </form>
-            </center>
-            <br />
-           <?php
-           }
+            default:
+                require_once( $this->plugin_dir . "page-main.php" );
+            break;
         }
-    }// end of function "main_page"
+    }
 
 }
 
