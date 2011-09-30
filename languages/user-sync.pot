@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WordPress VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-29 23:41+0200\n"
-"PO-Revision-Date: 2011-09-29 23:41+0200\n"
+"POT-Creation-Date: 2011-09-30 17:45+0200\n"
+"PO-Revision-Date: 2011-09-30 17:45+0200\n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,6 @@ msgid "To create a sub site, simply install this plugin at the sub site, activat
 msgstr ""
 
 #: c:\user-sync/page-central.php:125
-#: c:\user-sync/page-sub.php:102
 msgid "Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite."
 msgstr ""
 
@@ -58,23 +57,23 @@ msgid "'Sync all sites now' is used if you edit a subsite setting and need to up
 msgstr ""
 
 #: c:\user-sync/page-central.php:128
-msgid "To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on \"Remove all settings\" button or simple deactivate the plugin."
+msgid "To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on \"Disconnect from the Master site\" button or \"Uninstall Options\" button."
 msgstr ""
 
 #: c:\user-sync/page-central.php:130
 #: c:\user-sync/page-main.php:22
-#: c:\user-sync/page-sub.php:108
+#: c:\user-sync/page-sub.php:140
 msgid "For detailed 'how to use' instructions refer to:"
 msgstr ""
 
 #: c:\user-sync/page-central.php:131
 #: c:\user-sync/page-main.php:23
-#: c:\user-sync/page-sub.php:109
+#: c:\user-sync/page-sub.php:141
 msgid "WordPress User Synchronization Installation and Use instructions."
 msgstr ""
 
 #: c:\user-sync/page-central.php:138
-#: c:\user-sync/page-sub.php:116
+#: c:\user-sync/page-sub.php:109
 msgid "Attantion: Safe Mode!"
 msgstr ""
 
@@ -108,33 +107,33 @@ msgstr ""
 msgid "Don't overwrite any existing users (add them as extra users)"
 msgstr ""
 
-#: c:\user-sync/page-central.php:215
-#: c:\user-sync/page-sub.php:133
+#: c:\user-sync/page-central.php:219
+msgid "Sync all sites now"
+msgstr ""
+
+#: c:\user-sync/page-central.php:230
+#: c:\user-sync/page-sub.php:126
 msgid "Uninstall Options"
 msgstr ""
 
-#: c:\user-sync/page-central.php:216
-#: c:\user-sync/page-sub.php:134
+#: c:\user-sync/page-central.php:231
+#: c:\user-sync/page-sub.php:127
 msgid "Delete all plugin's options from DB."
 msgstr ""
 
-#: c:\user-sync/page-central.php:220
-#: c:\user-sync/page-sub.php:138
+#: c:\user-sync/page-central.php:235
+#: c:\user-sync/page-sub.php:131
 msgid "Are you sure?"
 msgstr ""
 
-#: c:\user-sync/page-central.php:222
-#: c:\user-sync/page-sub.php:140
+#: c:\user-sync/page-central.php:237
+#: c:\user-sync/page-sub.php:133
 msgid "No"
 msgstr ""
 
-#: c:\user-sync/page-central.php:223
-#: c:\user-sync/page-sub.php:141
+#: c:\user-sync/page-central.php:238
+#: c:\user-sync/page-sub.php:134
 msgid "Yes"
-msgstr ""
-
-#: c:\user-sync/page-central.php:236
-msgid "Sync all sites now"
 msgstr ""
 
 #: c:\user-sync/page-main.php:15
@@ -209,16 +208,20 @@ msgstr ""
 msgid "You can change these settings later on the Master site."
 msgstr ""
 
-#: c:\user-sync/page-sub.php:105
-msgid "Click on 'Remove all settings' to disconnect syncing with Master site."
+#: c:\user-sync/page-sub.php:102
+msgid "Note: Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite."
 msgstr ""
 
-#: c:\user-sync/page-sub.php:122
+#: c:\user-sync/page-sub.php:115
 msgid "Connect this site to the Master site, and do a FULL synchronization"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:128
+#: c:\user-sync/page-sub.php:121
 msgid "Disconnect from the Master site"
+msgstr ""
+
+#: c:\user-sync/page-sub.php:122
+msgid "Disconnect syncing with Master site"
 msgstr ""
 
 #: c:\user-sync/user-sync.php:33
@@ -237,23 +240,23 @@ msgstr ""
 msgid "User Sync"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:302
+#: c:\user-sync/user-sync.php:298
 msgid "Options are deleted!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:318
+#: c:\user-sync/user-sync.php:314
 msgid "Subsite successfully connected to Master site and Synchronization completed."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:324
+#: c:\user-sync/user-sync.php:320
 msgid "There was a connection problem. Please check the URL and Key of the Master site."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:344
+#: c:\user-sync/user-sync.php:340
 msgid "Subsite and Settings were successfully removed from the Central site!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:353
+#: c:\user-sync/user-sync.php:349
 msgid "Synchronization of all Subsites completed."
 msgstr ""
 

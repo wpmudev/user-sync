@@ -1,6 +1,6 @@
 <?php
             $user_sync_key   = $this->options['key'];
-            $user_sync_url_c = $this->options['url_c'];
+            $user_sync_url_c = $this->options['central_url'];
             $disabled = '';
 
             if ( "" != $user_sync_url_c )
@@ -64,7 +64,7 @@
                                 <?php _e( 'URL of Master site:', 'user-sync' ) ?>
                             </th>
                             <td>
-                                <input type="text" name="user_sync_url_c" id="user_sync_url_c" value="<?php echo $user_sync_url_c; ?>" size="70" <?php echo $disabled; ?> />
+                                <input type="text" name="user_sync_url_c" id="user_sync_url_c" value="<?php echo $user_sync_url_c; ?>" size="50" <?php echo $disabled; ?> />
                             </td>
                         </tr>
                         <tr valign="top">
@@ -72,7 +72,7 @@
                                 <?php _e( 'Key of Master site:', 'user-sync' ) ?>
                             </th>
                             <td>
-                                <input type="text" name="user_sync_key" id="user_sync_key" value="<?php echo $user_sync_key; ?>" size="30" <?php echo $disabled; ?> />
+                                <input type="text" name="user_sync_key" id="user_sync_key" value="<?php echo $user_sync_key; ?>" size="50" <?php echo $disabled; ?> />
                             </td>
                         </tr>
                     <?php if ( "" == $disabled ) {?>
@@ -99,15 +99,8 @@
                     <?php } ?>
                     </table>
                     <?php if ( "" == $disabled ) {?>
-                        <p><?php _e( "Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite.", 'user-sync' ) ?></p>
-                    <?php } else {?>
-                        <br />
-                        <p><?php _e( "Click on 'Remove all settings' to disconnect syncing with Master site.", 'user-sync' ) ?></p>
-                    <?php } ?>
-                    <p>
-                        <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
-                        <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
-                    </p>
+                        <p><?php _e( "Note: Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite.", 'user-sync' ) ?></p>
+                    <?php }?>
 
                     <?php if ( "" == $disabled ) {?>
                         <?php
@@ -126,9 +119,9 @@
                         <p class="submit">
                             <input type="hidden" name="usync_action" id="usync_action" value="remove_settings" />
                             <input type="submit" value="<?php _e( 'Disconnect from the Master site', 'user-sync' ) ?>" />
+                            <span class="description"><?php _e( 'Disconnect syncing with Master site', 'email-newsletter' ) ?></span>
                         </p>
                         <?php } ?>
-                        <br />
                         <p class="submit">
                             <input type="button" id="uninstall" style="color: red;" value="<?php _e( 'Uninstall Options', 'user-sync' ) ?>" />
                             <span class="description"><?php _e( "Delete all plugin's options from DB.", 'email-newsletter' ) ?></span>
@@ -142,5 +135,11 @@
                                 </span>
                             </span>
                         </p>
+
+                        <p>
+                            <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
+                            <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
+                        </p>
+
                 </form>
             </div>

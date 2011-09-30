@@ -125,7 +125,7 @@
             <p><?php _e( 'Use caution if you choose to overwrite existing users as it replaces all existing users and their passwords if the same username exists on the subsite.', 'user-sync' ) ?></p>
             <p><?php _e( 'Adding new user, or making any changes to user or their details, in the Master site are automatically synced to subsites.', 'user-sync' ) ?></p>
             <p><?php _e( "'Sync all sites now' is used if you edit a subsite setting and need to update users.", 'user-sync' ) ?></p>
-            <p><?php _e( 'To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on "Remove all settings" button or simple deactivate the plugin.', 'user-sync' ) ?></p>
+            <p><?php _e( 'To stop a subsite from syncing with Master site simply log into the subsite, go to the User Sync menu and click on "Disconnect from the Master site" button or "Uninstall Options" button.', 'user-sync' ) ?></p>
             <p>
                 <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />
                 <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'WordPress User Synchronization Installation and Use instructions.', 'user-sync' ) ?></a>
@@ -209,6 +209,21 @@
                 </table>
             </form>
 
+            <?php
+            if ( $user_sync_sub_urls )  {
+            ?>
+            <br />
+            <center>
+            <form method="post" action="">
+                <input type="hidden" name="usync_action" value="sync_all" />
+                <input type="submit" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
+            </form>
+            </center>
+            <br />
+           <?php
+           }
+           ?>
+
             <form method="post" action="" id="user_sync_form">
                 <input type="hidden" name="usync_action" id="usync_action" value="sync_all" />
                 <p class="submit">
@@ -225,18 +240,3 @@
                     </span>
                 </p>
             </form>
-
-            <?php
-            if ( $user_sync_sub_urls )  {
-            ?>
-            <br />
-            <center>
-            <form method="post" action="">
-                <input type="hidden" name="usync_action" value="sync_all" />
-                <input type="submit" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
-            </form>
-            </center>
-            <br />
-           <?php
-           }
-           ?>
