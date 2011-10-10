@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.0 Beta 8.1
+Version: 1.0 Beta 9
 Author: Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -286,13 +286,20 @@ class User_Sync {
                         $this->set_options( 'central_url', $_POST['user_sync_url_c'] );
                         $this->set_options( 'key', $_POST['user_sync_key'] );
 
-
-                        //Call Synchronization when activating new Subsite
-                        $result = $this->sync_new_subsite( $_POST['user_sync_url_c'], $_POST['user_sync_key'] );
+                        //connect Subsite to Master site
+                        $result = $this->connect_new_subsite( $_POST['user_sync_url_c'], $_POST['user_sync_key'] );
 
                         if ( "ok" == $result ) {
-                            wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite successfully connected to Master site and Synchronization completed.', 'user-sync' ) ) ), 'admin.php' ) );
-                            exit;
+                            //Call Synchronization when activating new Subsite
+                            $result = $this->sync_new_subsite( $_POST['user_sync_url_c'], $_POST['user_sync_key'] );
+
+                            if ( "ok" == $result ) {
+                                wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Subsite successfully connected to Master site and Synchronization completed.', 'user-sync' ) ) ), 'admin.php' ) );
+                                exit;
+                            } else {
+                                wp_redirect( add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'There was a sync problem.', 'user-sync' ) ) ), 'admin.php' ) );
+                                exit;
+                            }
                         } else {
                             $this->set_options( 'central_url', '' );
                             $this->set_options( 'key', '' );
@@ -379,18 +386,21 @@ class User_Sync {
     /**
      * Sending request on URL
      **/
-    function send_request( $url, $par ) {
+    function send_request( $url, $param, $blocking = true ) {
 
-        $url = $url . "/wp-admin/admin-ajax.php?action=user_sync_api&" . $par;
+        $url = $url . "/wp-admin/admin-ajax.php?action=user_sync_api";
 
         $args =  array(
-            'timeout' => 0
-            );
+            'method'    => 'POST',
+            'timeout'   => 0,
+            'blocking'  => $blocking,
+            'body'      => $param
+        );
 
         //writing some information in the plugin log file
         $this->write_log( "02 - sending request - url={$url};;" );
 
-        $response = wp_remote_get( $url, $args );
+        $response = wp_remote_post( $url, $args );
 
         if( is_wp_error( $response ) ) {
             //writing some information in the plugin log file
@@ -496,7 +506,7 @@ class User_Sync {
     /**
      *  Synchronization user
      **/
-    function sync_user( $users_id, $urls ) {
+    function sync_user( $users_id, $urls, $blocking = true ) {
         $key        = $this->options['key'];
         $urls       = (array) $urls;
         $users_id   = (array) $users_id;
@@ -518,7 +528,7 @@ class User_Sync {
                     $this->write_log( "09 - user sync" );
 
                     //sent information about user and hash to Subsite
-                    $this->send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p );
+                    $this->send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p, $blocking );
 
                     //Update last Sync date
                     $sub_urls = $this->options['sub_urls'];
@@ -534,7 +544,7 @@ class User_Sync {
      **/
     function user_change_data( $userID ) {
         //Call Synchronization function with ID of changed user and array of all Subsite URLs
-        $this->sync_user( $userID, $this->options['sub_urls'] );
+        $this->sync_user( $userID, $this->options['sub_urls'], false );
     }
 
     /**
@@ -582,9 +592,9 @@ class User_Sync {
     }
 
     /**
-     *  Synchronization when activating new Subsite
+     *  Connect new subsite to master site
      **/
-    function sync_new_subsite( $central_url, $key ) {
+    function connect_new_subsite( $central_url, $key ) {
         $replace_user   = 0;
         $overwrite_user = 0;
 
@@ -595,10 +605,29 @@ class User_Sync {
         if ( isset( $_POST['overwrite_user'] ) && "1" == $_POST['overwrite_user'] )
             $overwrite_user = 1;
 
-        $p = array ('url' => get_option( 'siteurl' ), 'replace_user' => $replace_user, 'overwrite_user' => $overwrite_user );
+        $p = array ( 'url' => get_option( 'siteurl' ), 'replace_user' => $replace_user, 'overwrite_user' => $overwrite_user );
 
         //writing some information in the plugin log file
-        $this->write_log( "01 - new sub site activating - central_url={$central_url};; replace_user={$replace_user};; overwrite_user={$overwrite_user};;" );
+        $this->write_log( "01 - new subsite conection - central_url={$central_url};; replace_user={$replace_user};; overwrite_user={$overwrite_user};;" );
+
+        $p =  base64_encode( serialize ( $p ) );
+
+        $hash = md5( $p . $key );
+
+        $result = $this->send_request( $central_url, "user_sync_action=connect_new_subsite&hash=". $hash . "&p=" . $p );
+
+        return $result;
+    }
+
+    /**
+     *  Synchronization when activating new Subsite
+     **/
+    function sync_new_subsite( $central_url, $key ) {
+
+        $p = array ( 'url' => get_option( 'siteurl' ) );
+
+        //writing some information in the plugin log file
+        $this->write_log( "01_2 - sync users for new subsite" );
 
         $p =  base64_encode( serialize ( $p ) );
 
@@ -821,18 +850,18 @@ class User_Sync {
                     break;
 
                     //action for Synchronization when activating new Subsite
-                    case "sync_new_subsite":
+                    case "connect_new_subsite":
                         $p = unserialize( $p );
 
                         $sub_urls = $this->options['sub_urls'];
 
                         $p = array (
-                                'url' => $p['url'],
-                                'last_sync' => date( "m.d.y G:i:s" ),
-                                'param' =>
+                                'url'       => $p['url'],
+                                'last_sync' => '',
+                                'param'     =>
                                     array(
-                                        'replace_user'=> $p['replace_user'],
-                                        'overwrite_user'=> $p['overwrite_user']
+                                        'replace_user'      => $p['replace_user'],
+                                        'overwrite_user'    => $p['overwrite_user']
                                         ) );
 
                         if ( is_array( $sub_urls ) ) {
@@ -845,14 +874,23 @@ class User_Sync {
                             $this->set_options( 'sub_urls', $sub_urls );
                         }
 
+                        //writing some information in the plugin log file
+                        $this->write_log( "07 - added new sub site" );
+
+                        die( "ok" );
+                    break;
+
+                    //action for Synchronization when activating new Subsite
+                    case "sync_new_subsite":
+                        $p = unserialize( $p );
+
+                        $sub_urls = $this->options['sub_urls'];
+
                         //Get all users ID
                         $users_id = $this->get_all_users_id();
 
                         //writing some information in the plugin log file
-                        $this->write_log( "07 - add new sub site" );
                         $this->write_log( "08 - count of users= ". count( $users_id ) . ";;" );
-
-                        $sub_urls = $this->options['sub_urls'];
 
                         $array_id = $this->get_index_by_url( $p['url'], $sub_urls );
 

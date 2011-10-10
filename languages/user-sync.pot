@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WordPress VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-30 17:45+0200\n"
-"PO-Revision-Date: 2011-09-30 17:45+0200\n"
+"POT-Creation-Date: 2011-10-11 00:52+0200\n"
+"PO-Revision-Date: 2011-10-11 00:52+0200\n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -240,23 +240,27 @@ msgstr ""
 msgid "User Sync"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:298
+#: c:\user-sync/user-sync.php:278
 msgid "Options are deleted!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:314
+#: c:\user-sync/user-sync.php:297
 msgid "Subsite successfully connected to Master site and Synchronization completed."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:320
+#: c:\user-sync/user-sync.php:300
+msgid "There was a sync problem."
+msgstr ""
+
+#: c:\user-sync/user-sync.php:307
 msgid "There was a connection problem. Please check the URL and Key of the Master site."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:340
+#: c:\user-sync/user-sync.php:327
 msgid "Subsite and Settings were successfully removed from the Central site!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:349
+#: c:\user-sync/user-sync.php:336
 msgid "Synchronization of all Subsites completed."
 msgstr ""
 
