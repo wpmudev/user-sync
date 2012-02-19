@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.0 Beta 9
+Version: 1.0.1
 Author: Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -516,7 +516,7 @@ class User_Sync {
             if ( $this->check_key( $one['url'], $key ) )
                 foreach ( $users_id as $user_id ) {
                     //get all information about user
-                    $userdata = (array) get_userdata( $user_id );
+                    $userdata = $this->_get_user_data( $user_id );
 
                     $p = array ( 'param' => array( 'replace_user' => $one['param']['replace_user'], 'overwrite_user' => $one['param']['overwrite_user'] ),
                                 'userdata' => $userdata );
@@ -551,7 +551,7 @@ class User_Sync {
      * Synchronization when user deleting
      **/
     function user_delete_data( $userID ) {
-        $user_data = (array) get_userdata( $userID );
+        $user_data = $this->_get_user_data( $userID );
 
         $status = $this->options['status'];
 
@@ -723,11 +723,12 @@ class User_Sync {
                                     if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
                                         $p['userdata']['user_email'] = "temp@temp.temp";
 
-                                    //delete user ID for Insert new user
-                                    array_splice( $p['userdata'], 0, 1 );
+                                    //user password
+                                    $user_sync_pass  = $p['userdata']['user_pass'];
 
-                                    //cut user password
-                                    $user_sync_pass  = array_splice( $p['userdata'], 1, 1 );
+                                    //delete user ID and user_pass for Insert new user
+                                    unset( $p['userdata']['ID'] );
+                                    unset( $p['userdata']['user_pass'] );
 
                                     //Insert new user
                                     //TODO: try use real password
@@ -735,7 +736,7 @@ class User_Sync {
                                     $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                                     //adding user password back for updating it
-                                    $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
+                                    $p['userdata']['user_pass'] = $user_sync_pass;
 
                                     //Update other data of user
                                     $this->update_other_user_data( $p['userdata'], $user_sync_last_id );
@@ -752,8 +753,12 @@ class User_Sync {
 
                             $p['userdata']['ID'] = $user_sync_id;
 
-                            //cut user password
-                            $user_sync_pass  = array_splice($p['userdata'], 2, 1);
+                            //user password
+                            $user_sync_pass  = $p['userdata']['user_pass'];
+
+                            //delete user_pass for update user
+                            unset( $p['userdata']['user_pass'] );
+
 
                             //checking email of user on duplicate
                             if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
@@ -764,7 +769,7 @@ class User_Sync {
                             $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                             //adding user password back for updating it
-                            $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
+                            $p['userdata']['user_pass'] = $user_sync_pass;
 
                             //Update other data of user
                             $this->update_other_user_data( $p['userdata'], $user_sync_last_id );
@@ -790,11 +795,12 @@ class User_Sync {
                             //writing some information in the plugin log file
                             $this->write_log( "17 - insert user - step 2" );
 
-                            //delete user ID for Insert new user
-                            array_splice( $p['userdata'], 0, 1 );
+                            //user password
+                            $user_sync_pass  = $p['userdata']['user_pass'];
 
-                            //cut user password
-                            $user_sync_pass  = array_splice( $p['userdata'], 1, 1 );
+                            //delete user ID and user_pass for Insert new user
+                            unset( $p['userdata']['ID'] );
+                            unset( $p['userdata']['user_pass'] );
 
                             //checking email of user on duplicate
                             if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
@@ -805,7 +811,7 @@ class User_Sync {
                             $user_sync_last_id = wp_insert_user( $p['userdata'] );
 
                             //adding user password back for updating it
-                            $p['userdata']['user_pass'] = $user_sync_pass['user_pass'];
+                            $p['userdata']['user_pass'] = $user_sync_pass;
 
                             //Update other data of user
                             $this->update_other_user_data( $p['userdata'], $user_sync_last_id );
@@ -949,6 +955,35 @@ class User_Sync {
             break;
         }
     }
+
+
+    /**
+     *  Get user data
+     **/
+    private function _get_user_data( $user_id ) {
+
+        $data = get_userdata( $user_id );
+
+        if ( !empty( $data->data ) )
+            $user_data = (array) $data->data;
+        else
+            $user_data = (array) $data;
+
+        $user_meta = get_user_meta( $user_id );
+
+        $keys = array();
+        // replace empty array on empty string
+        foreach ( $user_meta as $key => $value ) {
+            $keys[] = $key;
+        }
+
+        foreach ( $keys as $key ) {
+            $user_meta[$key] = get_user_meta( $user_id, $key, true );
+        }
+
+        return array_merge( $user_data, $user_meta );
+    }
+
 
 }
 
