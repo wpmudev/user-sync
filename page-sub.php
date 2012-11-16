@@ -106,7 +106,7 @@
                         <?php
                         //safe mode notice
                         if ( isset( $this->safe_mode_notice ) ):?>
-                            <span style="color: red;" ><?php _e( 'Attantion: Safe Mode!', 'user-sync' ); ?></span>
+                            <span style="color: red;" ><?php _e( 'Attention: Safe Mode!', 'user-sync' ); ?></span>
                             <img class="tooltip_img" src="<?php echo $this->plugin_url . "images/"; ?>info_small.png" title="<?php echo $this->safe_mode_notice; ?>"/>
                             <br />
                         <?php endif; ?>

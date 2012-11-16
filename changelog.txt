@@ -1,0 +1,6 @@
+Plugin Name: User Sync
+Plugin Author: cole@incsub.com
+
+= 1.1 =
+All additional user meta data is now updated on sync
+fixed minor spelling issues
