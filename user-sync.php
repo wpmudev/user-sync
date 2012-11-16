@@ -481,6 +481,7 @@ class User_Sync {
             UPDATE {$wpdb->base_prefix}users SET
             user_pass = '%s' WHERE ID = '%d'",
             $userdata['user_pass'], $user_id ) );
+		unset($userdata['user_pass']);
 
         //Update email on blank if email is duplicate
         if ( "temp@temp.temp" == $userdata['user_email'] )
@@ -488,18 +489,26 @@ class User_Sync {
                 UPDATE {$wpdb->base_prefix}users SET
                 user_email = '%s' WHERE ID = '%d'",
                 "", $user_id ) );
+		unset($userdata['user_email']);
 
         //Update user Role
         $result = $wpdb->query( $wpdb->prepare( "
             UPDATE {$wpdb->base_prefix}usermeta SET
             meta_value = '%s' WHERE user_id = '%d' AND meta_key = 'wp_capabilities'",
             serialize( $userdata['wp_capabilities'] ), $user_id ) );
+		unset($userdata['wp_capabilities']);
 
         //Update user Level
         $result = $wpdb->query( $wpdb->prepare( "
             UPDATE {$wpdb->base_prefix}usermeta SET
             meta_value = '%s' WHERE user_id = '%d' AND meta_key = 'wp_user_level'",
             $userdata['wp_user_level'], $user_id ) );
+		unset($userdata['wp_user_level']);
+        
+        
+        foreach( $userdata as $k => $v ) {
+        	update_user_meta($user_id,$k,$v);
+        }
 
     }
 
