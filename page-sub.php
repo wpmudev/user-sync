@@ -112,7 +112,7 @@
                         <?php endif; ?>
                         <p class="submit">
                             <input type="hidden" name="usync_action" id="usync_action" value="sub_site" />
-                            <input type="submit" value="<?php _e( 'Connect this site to the Master site, and do a FULL synchronization', 'user-sync' ) ?>" />
+                            <input type="submit" class="button" value="<?php _e( 'Connect this site to the Master site, and do a FULL synchronization', 'user-sync' ) ?>" />
                         </p>
 
                     <?php } else {?>
@@ -122,19 +122,19 @@
                             <span class="description"><?php _e( 'Disconnect syncing with Master site', 'email-newsletter' ) ?></span>
                         </p>
                         <?php } ?>
-                        <p class="submit">
-                            <input type="button" id="uninstall" style="color: red;" value="<?php _e( 'Uninstall Options', 'user-sync' ) ?>" />
+                        <div class="submit">
+                            <input type="button" class="button" id="uninstall" style="color: red;" value="<?php _e( 'Uninstall Options', 'user-sync' ) ?>" />
                             <span class="description"><?php _e( "Delete all plugin's options from DB.", 'email-newsletter' ) ?></span>
-                            <span id="uninstall_confirm" style="display: none;">
-                                <br />
-                                <span class="submit">
+                            <div id="uninstall_confirm" style="display: none;">
+                                <p>
                                     <span class="description"><?php _e( 'Are you sure?', 'email-newsletter' ) ?></span>
-                                    <br />
-                                    <input type="button" name="uninstall" id="uninstall_no" value="<?php _e( 'No', 'email-newsletter' ) ?>" />
-                                    <input type="button" name="uninstall" id="uninstall_yes" value="<?php _e( 'Yes', 'email-newsletter' ) ?>" />
-                                </span>
-                            </span>
-                        </p>
+                                </p>
+                                <p>
+                                    <input type="button" class="button" name="uninstall" id="uninstall_no" value="<?php _e( 'No', 'email-newsletter' ) ?>" />
+                                    <input type="button" class="button" name="uninstall" id="uninstall_yes" value="<?php _e( 'Yes', 'email-newsletter' ) ?>" />
+                                </p>
+                            </div>
+                        </div>
 
                         <p>
                             <?php _e( "For detailed 'how to use' instructions refer to:", 'user-sync' ) ?><br />

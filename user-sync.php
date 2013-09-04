@@ -3,12 +3,12 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1
-Author: Andrey Shipilov (Incsub), Cole (Incsub)
+Version: 1.1.1
+Author: Andrey Shipilov (Incsub), Cole (Incsub), Maniu (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
 
-Copyright 2007-2012 Incsub (http://incsub.com)
+Copyright 2007-2013 Incsub (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -384,7 +384,7 @@ class User_Sync {
 
         $args =  array(
             'method'    => 'POST',
-            'timeout'   => 0,
+            'timeout'   => 5,
             'blocking'  => $blocking,
             'body'      => $param
         );

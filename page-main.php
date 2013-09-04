@@ -33,26 +33,20 @@
                 <form method="post" action="" id="user_sync_form">
                     <input type="hidden" name="usync_action" value="install" />
                     <input type="hidden" name="user_sync_status" id="user_sync_status" value="" />
-                    <table class="form-table">
-                        <tr valign="top">
-                            <td>
-                                <div class="debug_message" >
+
+                                <p class="debug_message" >
 
                                     <?php _e( 'Note: If you have any problems with sync users you can use debug mode for writing some operations in the log file. You need open folder "/plugins/user-sync/log/" for writing. What do with log files you can read in instruction of plugin', 'user-sync' );  ?>
                                     <a href="http://premium.wpmudev.org/project/wordpress-user-synchronization/installation/" target="_blank" ><?php _e( 'here', 'user-sync' ) ?></a>
-                                    <br />
+                                    <br /><br />
                                     <input type="checkbox" name="debug" id="debug" value="1" />
                                     <label for="debug"><?php _e( 'Use Debug Mode', 'user-sync' ) ?></label>
 
-                                </div>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <td>
-                            <input type="button" value="<?php _e( 'Make this site the Master site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 1 );" />
-                            <input type="button" value="<?php _e( 'Make this a Sub site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 2 );" />
-                            </td>
-                        </tr>
-                    </table>
+                                </p>
+
+                            <p>
+                            <input type="button" class="button" value="<?php _e( 'Make this site the Master site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 1 );" />
+                            <input type="button" class="button" value="<?php _e( 'Make this a Sub site', 'user-sync' ) ?> " onclick="jQuery(this).makeChose( 2 );" />
+                            </p>
                 </form>
             </div>

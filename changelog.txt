@@ -1,5 +1,9 @@
 Plugin Name: User Sync
-Plugin Author: cole@incsub.com
+Plugin Author: Cole(Incsub), Maniu(Incsub)
+
+= 1.1.1 =
+Increased timeout for better syncing
+Improved admin interface
 
 = 1.1 =
 All additional user meta data is now updated on sync
