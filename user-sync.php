@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.1
+Version: 1.1.2
 Author: Andrey Shipilov (Incsub), Cole (Incsub), Maniu (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -61,7 +61,7 @@ class User_Sync {
         } else {
             wp_die( __( 'There was an issue determining where WPMU DEV User Sync is installed. Please reinstall.', 'user-sync' ) );
         }
-		
+
 		include_once( $this->plugin_dir . 'wpmudev-dashboard-notification.php' );
 
         // Check for safe mode
@@ -73,14 +73,12 @@ class User_Sync {
             set_time_limit(0);
         }
 
-
         add_action( 'admin_init', array( &$this, 'admin_init' ) );
 
         //rewrite old options from old version of plugin
         $this->rewrite_options();
         $this->options = $this->get_options();
 
-        add_action( 'admin_head', array( &$this, 'add_css' ) );
         add_action( 'admin_menu', array( &$this, 'admin_page' ) );
 
         //actions only for master site
@@ -96,11 +94,7 @@ class User_Sync {
         add_action( 'wp_ajax_nopriv_user_sync_settings', array( &$this, 'edit_settings' ) );
         add_action( 'wp_ajax_user_sync_settings', array( &$this, 'edit_settings' ) );
 
-        if ( isset( $_REQUEST['page'] ) && 'user-sync' == $_REQUEST['page']  ) {
-            wp_register_script( 'jquery_tooltips', $this->plugin_url . 'js/jquery.tools.min.js' );
-            wp_enqueue_script( 'jquery_tooltips' );
-        }
-
+        add_action('admin_enqueue_scripts', array($this,'register_scripts_styles_admin'));
 	}
 
     /**
@@ -182,56 +176,18 @@ class User_Sync {
 
 
     /**
-     * Adding css style in Head section
+     * Adding css style and script for admin page
      **/
-    function add_css() {
-    ?>
-        <style type="text/css">
-            .settings_block {
-                position: relative;
-            }
+    function register_scripts_styles_admin($hook) {
+        if( $hook == 'toplevel_page_user-sync' ) {
+            wp_register_style('user-sync-admin', $this->plugin_url.'/css/admin.css');
+            wp_enqueue_style('user-sync-admin');
 
-            .loading_image {
-                -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
-                filter: alpha(opacity=80);
-                opacity: 0.8;
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                background: url('<?php echo get_option( 'siteurl' );?>/wp-admin/images/loading.gif') #fff no-repeat center center;
-                z-index: 1099;
-                display: none;
-            }
-
-            .debug_message {
-                background-color: #FFFFE0;
-                border-style: solid;
-                border-width: 1px;
-                border-color: #E6DB55;
-                margin: 0px 0px 0px 0px;
-                padding: 5px 10px 5px 10px;
-                -moz-border-radius: 3px 3px 3px 3px;
-            }
-
-            .tooltip {
-                display:none;
-                background:transparent url("<?php echo $this->plugin_url ?>images/black_arrow_big.png");
-                font-size:12px;
-                height:166px;
-                width:320px;
-                padding:25px;
-                color:#fff;
-                z-index: 1000;
-            }
-
-            /* tooltip styling. by default the element to be styled is .tooltip  */
-            .tooltip_img {
-                vertical-align: middle;
-            }
-
-        </style>
-    <?php
+            wp_register_script( 'jquery-tooltips', $this->plugin_url . 'js/jquery.tools.min.js', array('jquery') );
+            wp_enqueue_script( 'jquery-tooltips' );
+        }
     }
+
 
     /**
      * plugin actions
@@ -496,8 +452,8 @@ class User_Sync {
             meta_value = '%s' WHERE user_id = '%d' AND meta_key = 'wp_user_level'",
             $userdata['wp_user_level'], $user_id ) );
 		unset($userdata['wp_user_level']);
-        
-        
+
+
         foreach( $userdata as $k => $v ) {
         	update_user_meta($user_id,$k,$v);
         }
@@ -988,5 +944,5 @@ class User_Sync {
 
 }
 
-$user_sync =& new User_Sync();
+$user_sync = new User_Sync();
 ?>

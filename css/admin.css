@@ -1,0 +1,41 @@
+.settings_block {
+    position: relative;
+}
+
+.loading_image {
+    -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
+    filter: alpha(opacity=80);
+    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: url('<?php echo get_option( 'siteurl' );?>/wp-admin/images/loading.gif') #fff no-repeat center center;
+    z-index: 1099;
+    display: none;
+}
+
+.debug_message {
+    background-color: #FFFFE0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E6DB55;
+    margin: 0px 0px 0px 0px;
+    padding: 5px 10px 5px 10px;
+    -moz-border-radius: 3px 3px 3px 3px;
+}
+
+.tooltip {
+    display:none;
+    background:transparent url("<?php echo $this->plugin_url ?>images/black_arrow_big.png");
+    font-size:12px;
+    height:166px;
+    width:320px;
+    padding:25px;
+    color:#fff;
+    z-index: 1000;
+}
+
+/* tooltip styling. by default the element to be styled is .tooltip  */
+.tooltip_img {
+    vertical-align: middle;
+}
