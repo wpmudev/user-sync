@@ -83,9 +83,9 @@ class User_Sync {
 
         //actions only for master site
         if ( "central" == $this->options['status'] ) {
-            add_action( 'profile_update', array( &$this, 'user_change_data' ) );
-            add_action( 'user_register', array( &$this, 'user_change_data' ) );
-            add_action( 'delete_user', array( &$this, 'user_delete_data' ) );
+            add_action( 'profile_update', array( &$this, 'user_change_data' ), 20 );
+            add_action( 'user_register', array( &$this, 'user_change_data' ), 20 );
+            add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
         }
 
         add_action( 'wp_ajax_nopriv_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );

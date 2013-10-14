@@ -3,6 +3,7 @@ Plugin Author: Cole(Incsub), Maniu(Incsub)
 
 = 1.1.2 =
 Enabled loading of CSS and JS file only on User Sync admin page
+Increased sync actions priorities for improved compatibility with other plugins
 
 = 1.1.1 =
 Increased timeout for better syncing
