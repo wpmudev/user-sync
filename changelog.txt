@@ -1,6 +1,10 @@
 Plugin Name: User Sync
 Plugin Author: Cole(Incsub), Maniu(Incsub)
 
+= 1.1.3 =
+Added support for MP6
+Small UI improvements
+
 = 1.1.2 =
 Enabled loading of CSS and JS file only on User Sync admin page
 Increased sync actions priorities for improved compatibility with other plugins

@@ -201,7 +201,7 @@
                             </div>
                         </td>
                         <td style="vertical-align: middle;">
-                        <input type="button" name="edit_button" id="actin_button_<?php echo $user_sync_i;?>" value="Edit" onclick="jQuery(this).editSettings( <?php echo $user_sync_i;?> );" />
+                        <input type="button" class="button button-secondary" name="edit_button" id="actin_button_<?php echo $user_sync_i;?>" value="Edit" onclick="jQuery(this).editSettings( <?php echo $user_sync_i;?> );" />
                         </td>
                     </tr>
                 <?php
@@ -214,7 +214,7 @@
             <center>
             <form method="post" action="">
                 <input type="hidden" name="usync_action" value="sync_all" />
-                <input type="submit" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
+                <input type="submit" class="button button-primary" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
             </form>
             </center>
             <br />

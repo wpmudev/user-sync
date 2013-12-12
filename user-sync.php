@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.2
+Version: 1.1.3
 Author: Andrey Shipilov (Incsub), Cole (Incsub), Maniu (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -46,6 +46,10 @@ class User_Sync {
 	 **/
 	function __construct() {
 
+        global $wpmudev_notices;
+        $wpmudev_notices[] = array( 'id'=> 218,'name'=> 'User Synchronization', 'screens' => array( 'toplevel_page_user-sync' ) );
+        include_once( $this->plugin_dir . 'wpmudev-dash-notification.php' );
+
         load_plugin_textdomain( 'user-sync', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
         //setup proper directories
@@ -61,8 +65,6 @@ class User_Sync {
         } else {
             wp_die( __( 'There was an issue determining where WPMU DEV User Sync is installed. Please reinstall.', 'user-sync' ) );
         }
-
-		include_once( $this->plugin_dir . 'wpmudev-dashboard-notification.php' );
 
         // Check for safe mode
         if ( ini_get( 'safe_mode' ) ) {
@@ -185,6 +187,12 @@ class User_Sync {
 
             wp_register_script( 'jquery-tooltips', $this->plugin_url . 'js/jquery.tools.min.js', array('jquery') );
             wp_enqueue_script( 'jquery-tooltips' );
+        }
+        global $wp_version;
+
+        if ( $wp_version >= 3.8 ) {
+            wp_register_style( 'user-sync-mp6', $this->plugin_url.'/css/mp6.css');
+            wp_enqueue_style('user-sync-mp6');
         }
     }
 
