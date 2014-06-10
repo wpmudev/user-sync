@@ -1,5 +1,7 @@
 Plugin Name: User Sync
-Plugin Author: Cole(Incsub), Maniu(Incsub)
+Author: WPMUDEV
+Lead developer: Maniu
+Contributors: Andrey Shipilov, Cole
 
 = 1.1.3 =
 Added support for MP6

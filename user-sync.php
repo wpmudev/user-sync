@@ -4,7 +4,7 @@ Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
 Version: 1.1.3
-Author: Andrey Shipilov (Incsub), Cole (Incsub), Maniu (Incsub)
+Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
 
@@ -87,9 +87,10 @@ class User_Sync {
         if ( "central" == $this->options['status'] ) {
             add_action( 'profile_update', array( &$this, 'user_change_data' ), 20 );
             add_action( 'user_register', array( &$this, 'user_change_data' ), 20 );
+           
             add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
         }
-
+        add_action( 'bp_core_signup_after_activate', array( &$this, 'bp_users_activate' ), 20, 2 );
         add_action( 'wp_ajax_nopriv_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
         add_action( 'wp_ajax_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
 
@@ -348,7 +349,7 @@ class User_Sync {
 
         $args =  array(
             'method'    => 'POST',
-            'timeout'   => 5,
+            'timeout'   => 10,
             'blocking'  => $blocking,
             'body'      => $param
         );
@@ -950,6 +951,10 @@ class User_Sync {
     }
 
 
+    function bp_users_activate($signup_ids, $result) {
+        var_dump($signup_ids, $result);
+        die();
+    }
 }
 
 $user_sync = new User_Sync();
