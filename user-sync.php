@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.3
+Version: 1.1.4
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -36,10 +36,6 @@ class User_Sync {
     var $plugin_url;
     var $error;
     var $options;
-
-    function User_Sync() {
-        __construct();
-    }
 
 	/**
 	 * PHP 5 constructor
@@ -451,14 +447,14 @@ class User_Sync {
         //Update user Role
         $result = $wpdb->query( $wpdb->prepare( "
             UPDATE {$wpdb->base_prefix}usermeta SET
-            meta_value = '%s' WHERE user_id = '%d' AND meta_key = 'wp_capabilities'",
+            meta_value = '%s' WHERE user_id = '%d' AND meta_key = '{$wpdb->base_prefix}capabilities'",
             serialize( $userdata['wp_capabilities'] ), $user_id ) );
 		unset($userdata['wp_capabilities']);
 
         //Update user Level
         $result = $wpdb->query( $wpdb->prepare( "
             UPDATE {$wpdb->base_prefix}usermeta SET
-            meta_value = '%s' WHERE user_id = '%d' AND meta_key = 'wp_user_level'",
+            meta_value = '%s' WHERE user_id = '%d' AND meta_key = '{$wpdb->base_prefix}user_level'",
             $userdata['wp_user_level'], $user_id ) );
 		unset($userdata['wp_user_level']);
 
@@ -927,6 +923,7 @@ class User_Sync {
      *  Get user data
      **/
     private function _get_user_data( $user_id ) {
+        global $wpdb;
 
         $data = get_userdata( $user_id );
 
@@ -945,6 +942,14 @@ class User_Sync {
 
         foreach ( $keys as $key ) {
             $user_meta[$key] = get_user_meta( $user_id, $key, true );
+        }
+
+        $prefix_fix = array('capabilities', 'user_level');
+        foreach ($prefix_fix as $key) {
+            if(isset($user_meta[$wpdb->get_blog_prefix() . $key])) {
+                $user_meta['wp_' . $key] = $user_meta[$wpdb->get_blog_prefix() . $key];
+                unset($user_meta[$wpdb->get_blog_prefix() . $key]);
+            }
         }
 
         return array_merge( $user_data, $user_meta );
