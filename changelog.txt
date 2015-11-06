@@ -3,6 +3,9 @@ Author: WPMUDEV
 Lead developer: Maniu
 Contributors: Andrey Shipilov, Cole
 
+= 1.1.5 =
+Fixed capabilities sync issue
+
 = 1.1.4 =
 Fixed issues related to custom db prefix
 
