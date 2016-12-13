@@ -3,6 +3,12 @@ Author: WPMUDEV
 Lead developer: Maniu
 Contributors: Andrey Shipilov, Cole
 
+= 1.1.5.5 =
+Improved "Sync all sites now" functionality to decrease possibility of timeout
+Added check for HTTPS on admin
+Disabled SSL verifying
+Increased request timeout
+
 = 1.1.5 =
 Fixed capabilities sync issue
 

@@ -118,7 +118,7 @@
                     <?php } else {?>
                         <p class="submit">
                             <input type="hidden" name="usync_action" id="usync_action" value="remove_settings" />
-                            <input type="submit" value="<?php _e( 'Disconnect from the Master site', 'user-sync' ) ?>" />
+                            <input type="submit" class="button button-secondary" value="<?php _e( 'Disconnect from the Master site', 'user-sync' ) ?>" />
                             <span class="description"><?php _e( 'Disconnect syncing with Master site', 'email-newsletter' ) ?></span>
                         </p>
                         <?php } ?>

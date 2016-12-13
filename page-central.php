@@ -1,9 +1,9 @@
-  <?php
+<?php
             $user_sync_key      = $this->options['key'];
             $user_sync_sub_urls = $this->options['sub_urls'];
-            $user_sync_siteur   = get_option( 'siteurl' );
+            $user_sync_siteur   = site_url('', 'admin');
 
-        ?>
+?>
             <script type="text/javascript">
                 jQuery( document ).ready( function() {
                     jQuery.fn.editSettings = function ( id ) {
@@ -89,15 +89,12 @@
 
                 });
             </script>
-
             <div class="wrap">
-
                 <?php
                 //Debug mode
                 if ( isset( $this->options['debug_mode'] ) && '1' == $this->options['debug_mode'] ):?>
                 <div class="updated fade"><p><?php _e( 'Debug Mode is activated.', 'user-sync' ); ?></p></div>
                 <?php endif; ?>
-
                 <h2><?php _e( 'Master Site Settings', 'user-sync' ) ?></h2>
                 <h3><?php _e( 'All user data from this master site will be synchronized with connected subsites.', 'user-sync' ) ?></h3>
                 <table class="form-table">
@@ -214,7 +211,8 @@
             <center>
             <form method="post" action="">
                 <input type="hidden" name="usync_action" value="sync_all" />
-                <input type="submit" class="button button-primary" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
+                <input type="submit" id="user-sync-sync-all" class="button button-primary" value="<?php _e( 'Sync all sites now', 'user-sync' ) ?>"  />
+                <span id="user-sync-spinner" class="spinner spinner-save"></span>
             </form>
             </center>
             <br />

@@ -39,3 +39,7 @@
 .tooltip_img {
     vertical-align: middle;
 }
+
+#user-sync-spinner {
+    float: none;
+}

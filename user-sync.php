@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.5
+Version: 1.1.5.5
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -86,7 +86,10 @@ class User_Sync {
            
             add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
         }
-        add_action( 'bp_core_signup_after_activate', array( &$this, 'bp_users_activate' ), 20, 2 );
+        //add_action( 'bp_core_signup_after_activate', array( &$this, 'bp_users_activate' ), 20, 2 );
+
+        add_action( 'wp_ajax_user_sync_sync_all', array( &$this, 'sync_all_subsite' ) );
+
         add_action( 'wp_ajax_nopriv_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
         add_action( 'wp_ajax_user_sync_api', array( &$this, 'user_sync_ajax_action' ) );
 
@@ -157,7 +160,7 @@ class User_Sync {
      * Write log
      **/
     function write_log( $message ) {
-        if ( '1' == $this->options['debug_mode'] ) {
+        if ( isset($this->options['debug_mode']) && '1' == $this->options['debug_mode'] ) {
             if ( "central" == $this->options['status'] ) {
                 $site_type = "[M] ";
                 $file = $this->plugin_dir . "log/errors_m.log";
@@ -184,6 +187,9 @@ class User_Sync {
 
             wp_register_script( 'jquery-tooltips', $this->plugin_url . 'js/jquery.tools.min.js', array('jquery') );
             wp_enqueue_script( 'jquery-tooltips' );
+
+            wp_register_script( 'user-sync', $this->plugin_url . 'js/admin.js', array('jquery') );
+            wp_enqueue_script( 'user-sync' );
         }
         global $wp_version;
 
@@ -345,8 +351,9 @@ class User_Sync {
 
         $args =  array(
             'method'    => 'POST',
-            'timeout'   => 10,
+            'timeout'   => apply_filters('user_sync_timeout', 0),
             'blocking'  => $blocking,
+            'sslverify' => false,
             'body'      => $param
         );
 
@@ -357,9 +364,11 @@ class User_Sync {
 
         if( is_wp_error( $response ) ) {
             //writing some information in the plugin log file
-            $this->write_log( "04 - sending request: something went wrong" );
+            $this->write_log( "04 - sending request: something went wrong={$respons->get_error_message()};;" );
 
 //           echo 'Something went wrong!';
+
+            return false;
         } else {
             //writing some information in the plugin log file
             $this->write_log( "03 - sending request - response={$response["body"]};;" );
@@ -473,9 +482,11 @@ class User_Sync {
         $urls       = (array) $urls;
         $users_id   = (array) $users_id;
 
+        $errors = array('sites' => array(), 'users' => array());
+
         foreach ( $urls as $one ) {
             //Checking key of security from Subsite
-            if ( $this->check_key( $one['url'], $key ) )
+            if ( $this->check_key( $one['url'], $key ) ) {
                 foreach ( $users_id as $user_id ) {
                     //get all information about user
                     $userdata = $this->_get_user_data( $user_id );
@@ -490,7 +501,10 @@ class User_Sync {
                     $this->write_log( "09 - user sync" );
 
                     //sent information about user and hash to Subsite
-                    $this->send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p, $blocking );
+                    $result = $this->send_request( $one['url'], "user_sync_action=sync_user&hash=". $hash . "&p=" . $p, $blocking );
+
+                    if(!$result)
+                        $errors['users'][] = $user_id;
 
                     //Update last Sync date
                     $sub_urls = $this->options['sub_urls'];
@@ -498,7 +512,13 @@ class User_Sync {
                     $sub_urls[$array_id]['last_sync'] = date( "m.d.y G:i:s" );
                     $this->set_options( 'sub_urls', $sub_urls );
                 }
+            }
+            else {
+                $errors['sites'][] = $one['url'];
+            }
         }
+
+        return $errors;
     }
 
     /**
@@ -604,11 +624,38 @@ class User_Sync {
      *  Synchronization of all Subsites
      **/
     function sync_all_subsite() {
+        $users_per_request = apply_filters('user_sync_sync_all_users_per_request', 50);
+
         //Get all users ID
         $users_id = $this->get_all_users_id();
+        $sites = $this->options['sub_urls'];
+
+        $users_end = 1;
+        $sites_end = 1;
+        $redirect_url = false;
+
+        if(isset($_REQUEST['page'])) {
+            $users_start_index = $_REQUEST['page'] < 2 ? 0 : (($users_per_request * $_REQUEST['page']-1)-1);
+
+            $users_id = array_slice($users_id, $users_start_index, $users_per_request);
+
+            $users_end = count($users_id) < $users_per_request ? 1 : 0;
+        }
+        if(isset($_REQUEST['site'])) {
+            $sites = array_slice($sites, ($_REQUEST['site']-1), 1);
+
+            $sites_end = !$sites ? 1 : 0;
+            
+            if($sites_end)
+                $redirect_url = add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Synchronization of all Subsites completed.', 'user-sync' ) ) ), 'admin.php' );
+        }
 
         //Call Synchronization for all Subsites
-        $this->sync_user( $users_id, $this->options['sub_urls'] );
+        $errors = (count($sites) && count($users_id)) ? $this->sync_user( $users_id, $sites ) : false;
+
+        if(defined('DOING_AJAX')) {
+            wp_send_json_success(array('errors' => $errors, 'users_end' => $users_end, 'sites_end' => $sites_end, 'redirect_url' => $redirect_url));
+        }
     }
 
     /**
@@ -900,7 +947,7 @@ class User_Sync {
 
         //Display status message
         if ( isset( $_GET['updated'] ) ) {
-            ?><br /><br /><div id="message" class="updated fade"><p><?php _e( urldecode( $_GET['dmsg']), 'user-sync' ) ?></p></div><?php
+            ?><div id="message" class="updated fade"><p><?php _e( urldecode( $_GET['dmsg']), 'user-sync' ) ?></p></div><?php
         }
 
         switch( $this->options['status'] ) {
