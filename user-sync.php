@@ -364,7 +364,7 @@ class User_Sync {
 
         if( is_wp_error( $response ) ) {
             //writing some information in the plugin log file
-            $this->write_log( "04 - sending request: something went wrong={$respons->get_error_message()};;" );
+            $this->write_log( "04 - sending request: something went wrong={$response->get_error_message()};;" );
 
 //           echo 'Something went wrong!';
 
