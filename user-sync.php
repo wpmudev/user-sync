@@ -351,7 +351,7 @@ class User_Sync {
 
         $args =  array(
             'method'    => 'POST',
-            'timeout'   => apply_filters('user_sync_timeout', 0),
+            'timeout'   => apply_filters('user_sync_timeout', 10), //Timeout of 0 is unrealistic. Sync issues will occur even on localhost
             'blocking'  => $blocking,
             'sslverify' => false,
             'body'      => $param
