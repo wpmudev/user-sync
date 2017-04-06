@@ -698,11 +698,7 @@ class User_Sync {
                         //writing some information in the plugin log file
                         $this->write_log( "5-10 - start sync_user" );
 
-                        $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] ) );
-                        if ( isset( $user_sync_id['0'] ) )
-                            $user_sync_id = $user_sync_id['0']->ID;
-                        else
-                            $user_sync_id = false;
+                        $user_sync_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] ) );
 
                         if( $user_sync_id ) {
                             //Update user
@@ -713,11 +709,7 @@ class User_Sync {
                             //checking settings of overwrite user and flag of users that sync from master site
                             if ( 1 == $p['param']['overwrite_user'] && "1" != get_user_meta( $user_sync_id, "user_sync", true ) ) {
 
-                                $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] . "_sync" ) );
-                                if ( isset( $user_sync_id['0'] ) )
-                                    $user_sync_id = $user_sync_id['0']->ID;
-                                else
-                                    $user_sync_id = false;
+                                $user_sync_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['userdata']['user_login'] . "_sync" ) );
 
                                 //if user exist we have new ID in $user_sync_id and we can use code below for Update user data
                                 if( ! $user_sync_id ) {
@@ -730,7 +722,7 @@ class User_Sync {
 
                                     //checking email of user on duplicate
                                     if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
-                                        $p['userdata']['user_email'] = "temp@temp.temp";
+                                        $p['userdata']['user_email'] = $this->generate_email($p['userdata']['user_login']);
 
                                     //user password
                                     $user_sync_pass  = $p['userdata']['user_pass'];
@@ -771,7 +763,7 @@ class User_Sync {
 
                             //checking email of user on duplicate
                             if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
-                                $p['userdata']['user_email'] = "temp@temp.temp";
+                                $p['userdata']['user_email'] = $this->generate_email($p['userdata']['user_login']);
 
                             //update user data
                             $p['userdata']['user_pass'] = '';
@@ -813,7 +805,7 @@ class User_Sync {
 
                             //checking email of user on duplicate
                             if ( $user_sync_id != email_exists( $p['userdata']['user_email'] ) && false != email_exists( $p['userdata']['user_email'] ) )
-                                $p['userdata']['user_email'] = "temp@temp.temp";
+                                $p['userdata']['user_email'] = $this->generate_email($p['userdata']['user_login']);
 
                             //Insert new user
                             $p['userdata']['user_pass'] = '';
@@ -840,16 +832,14 @@ class User_Sync {
                         $p = unserialize( $p );
 
                         //checking that user exist
-                        $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['user_login'] ) );
-                        $user_sync_id = $user_sync_id['0']->ID;
+                        $user_sync_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['user_login'] ) );
 
                         if( $user_sync_id ) {
                             //Update user
                             //checking settings of overwrite user and flag of users that sync from master site
                             if ( 1 == $p['overwrite_user'] && "1" != get_user_meta( $user_sync_id, "user_sync", true ) ) {
 
-                                $user_sync_id = $wpdb->get_results( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['user_login'] . "_sync" ) );
-                                $user_sync_id = $user_sync_id['0']->ID;
+                                $user_sync_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->base_prefix}users WHERE user_login = '%s'", $p['user_login'] . "_sync" ) );
 
                                 if( ! $user_sync_id )
                                     return;
@@ -938,6 +928,34 @@ class User_Sync {
         //writing some information in the plugin log file
         $this->write_log( "3-10 - p or hash not set" );
     }
+
+    /**
+     * Generate Email for the domain
+     * We dont want to have users with the same email and cause errors
+     *
+     * @param String $user_name - current username
+     *
+     * @return String
+     */
+    function generate_email( $user_name ){
+		$url        = site_url();
+		$url_info   = pathinfo($url);
+
+		if ( $url_info['dirname'] ){
+			$domain = $url_info['dirname'];
+		} else {
+			$domain = $url_info['basename'];
+		}
+		
+		$domain     = str_replace( "www.", "", $domain );
+		$user_count = get_user_count();
+
+        if ( empty( $user_name ) ){
+            $user_name = 'test';
+        }
+		
+		return $user_name.'_'.$user_count.'@'.$domain;
+	}
 
     /**
      *  Tempalate of pages
