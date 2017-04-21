@@ -36,6 +36,7 @@ class User_Sync {
     var $plugin_url;
     var $error;
     var $options;
+    var $plugin_log_dir;
 
 	/**
 	 * PHP 5 constructor
@@ -47,6 +48,8 @@ class User_Sync {
         include_once( $this->plugin_dir . 'wpmudev-dash-notification.php' );
 
         load_plugin_textdomain( 'user-sync', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+        $this->plugin_log_dir = WP_CONTENT_DIR . '/user-sync-logs';
 
         //setup proper directories
         if ( is_multisite() && defined( 'WPMU_PLUGIN_URL' ) && defined( 'WPMU_PLUGIN_DIR' ) && file_exists( WPMU_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
@@ -76,6 +79,8 @@ class User_Sync {
         //rewrite old options from old version of plugin
         $this->rewrite_options();
         $this->options = $this->get_options();
+
+        $this->init_log_directory(); //Create log directory
 
         add_action( 'admin_menu', array( &$this, 'admin_page' ) );
 
@@ -155,24 +160,51 @@ class User_Sync {
         }
     }
 
+    /**
+     * Create the log directory
+     */
+    function init_log_directory() {
+        if ( !is_dir( $this->plugin_log_dir ) ) {
+
+            mkdir( $this->plugin_log_dir, 0, true );
+            chmod( $this->plugin_log_dir, 0777 );
+
+            //Ad log files
+            $log_file_handle = fopen( $this->plugin_log_dir . '/errors_m.log', 'w');
+            fclose( $log_file_handle );
+            $log_file_handle = fopen( $this->plugin_log_dir . '/errors_s.log', 'w');
+            fclose( $log_file_handle );
+
+            //Add blank index.php file
+            $log_file_handle = fopen( $this->plugin_log_dir . '/index.php', 'w');
+            fclose( $log_file_handle );
+
+            //.htaccess
+            $log_file_handle = fopen( $this->plugin_log_dir . '/.htaccess', 'w');
+            fwrite( $handle, 'deny from all' );
+            fclose( $handle );
+        }
+    }
 
     /**
      * Write log
      **/
     function write_log( $message ) {
         if ( isset($this->options['debug_mode']) && '1' == $this->options['debug_mode'] ) {
+
             if ( "central" == $this->options['status'] ) {
                 $site_type = "[M] ";
-                $file = $this->plugin_dir . "log/errors_m.log";
+                $file = $this->plugin_log_dir . "/errors_m.log";
+
             } else {
                 $site_type = "[S] ";
-                $file = $this->plugin_dir . "log/errors_s.log";
+                $file = $this->plugin_log_dir . "/errors_s.log";
             }
 
             $handle = fopen( $file, 'ab' );
             $data = date( "[Y-m-d H:i:s]" ) . $site_type . $message . "***\r\n";
-            fwrite($handle, $data);
-            fclose($handle);
+            fwrite( $handle, $data );
+            fclose( $handle );
         }
     }
 
