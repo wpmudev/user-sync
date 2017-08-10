@@ -5,173 +5,333 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WordPress VERSION\n"
+"Project-Id-Version: User Sync\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-11 00:52+0200\n"
-"PO-Revision-Date: 2013-10-11 14:04+0100\n"
+"POT-Creation-Date: 2017-04-10 10:39+0100\n"
+"PO-Revision-Date: 2017-04-10 10:39+0100\n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _e;__\n"
-"X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.5.5\n"
-"X-Poedit-SearchPath-0: c:\\user-sync\n"
+"X-Poedit-Basepath: C:\\Programs Portable\\EasyPHP\\data\\localweb\\wordpress-"
+"incsub\\wp-content\\plugins\\user-sync\n"
+"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: C:\\Programs Portable\\EasyPHP\\data\\localweb"
+"\\wordpress-incsub\\wp-content\\plugins\\user-sync\n"
 
-#: c:\user-sync/page-central.php:98 c:\user-sync/page-sub.php:55
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:223
+msgid "install"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:230
+#, php-format
+msgid ""
+"Important updates are available for <strong>%s</strong>. Install the free "
+"WPMU DEV Dashboard plugin now for updates and support!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:232
+#, php-format
+msgid ""
+"<strong>%s</strong> is almost ready - install the free WPMU DEV Dashboard "
+"plugin for updates and support!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:236
+msgid ""
+"Important updates are available for your WPMU DEV plugins/themes. Install "
+"the free WPMU DEV Dashboard plugin now for updates and support!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:238
+msgid ""
+"Almost ready - install the free WPMU DEV Dashboard plugin for updates and "
+"support!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:244
+msgid "Install Plugin"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:247
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:288
+msgid "Saving..."
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:248
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:289
+msgid "Dismiss"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:264
+msgid "activate"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:271
+#, php-format
+msgid ""
+"Important updates are available for <strong>%s</strong>. Activate the WPMU "
+"DEV Dashboard to update now!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:273
+#, php-format
+msgid ""
+"Just one more step to enable updates and support for <strong>%s</strong>!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:277
+msgid ""
+"Important updates are available for your WPMU DEV plugins/themes. Activate "
+"the WPMU DEV Dashboard to update now!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:279
+msgid ""
+"Just one more step - activate the WPMU DEV Dashboard plugin and you're all "
+"done!"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:285
+msgid "Activate WPMU DEV Dashboard"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:952
+msgid "We did not find any data for this plugin or theme..."
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:1161
+msgid "Current"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/dash-notice/wpmudev-dash-notification.php:1167
+msgid "New"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:96
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:55
 msgid "Debug Mode is activated."
 msgstr ""
 
-#: c:\user-sync/page-central.php:101
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:98
 msgid "Master Site Settings"
 msgstr ""
 
-#: c:\user-sync/page-central.php:102
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:99
 msgid ""
 "All user data from this master site will be synchronized with connected "
 "subsites."
 msgstr ""
 
-#: c:\user-sync/page-central.php:106 c:\user-sync/page-sub.php:64
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:103
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:64
 msgid "URL of Master site:"
 msgstr ""
 
-#: c:\user-sync/page-central.php:114
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:111
 msgid "Security Key:"
 msgstr ""
 
-#: c:\user-sync/page-central.php:124
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:121
 msgid ""
 "To create a sub site, simply install this plugin at the sub site, activate "
 "it, make that site a 'Sub' site and enter the URL (including http) and the "
 "key supplied here."
 msgstr ""
 
-#: c:\user-sync/page-central.php:125
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:122
 msgid ""
 "Use caution if you choose to overwrite existing users as it replaces all "
 "existing users and their passwords if the same username exists on the "
 "subsite."
 msgstr ""
 
-#: c:\user-sync/page-central.php:126
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:123
 msgid ""
 "Adding new user, or making any changes to user or their details, in the "
 "Master site are automatically synced to subsites."
 msgstr ""
 
-#: c:\user-sync/page-central.php:127
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:124
 msgid ""
 "'Sync all sites now' is used if you edit a subsite setting and need to "
 "update users."
 msgstr ""
 
-#: c:\user-sync/page-central.php:128
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:125
 msgid ""
 "To stop a subsite from syncing with Master site simply log into the subsite, "
 "go to the User Sync menu and click on \"Disconnect from the Master site\" "
 "button or \"Uninstall Options\" button."
 msgstr ""
 
-#: c:\user-sync/page-central.php:130 c:\user-sync/page-main.php:22
-#: c:\user-sync/page-sub.php:140
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:127
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:22
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:140
 msgid "For detailed 'how to use' instructions refer to:"
 msgstr ""
 
-#: c:\user-sync/page-central.php:131 c:\user-sync/page-main.php:23
-#: c:\user-sync/page-sub.php:141
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:128
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:23
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:141
 msgid "WordPress User Synchronization Installation and Use instructions."
 msgstr ""
 
-#: c:\user-sync/page-central.php:138 c:\user-sync/page-sub.php:109
-msgid "Attantion: Safe Mode!"
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:135
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:109
+msgid "Attention: Safe Mode!"
 msgstr ""
 
-#: c:\user-sync/page-central.php:143
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:140
 msgid "Registered Subsites:"
 msgstr ""
 
-#: c:\user-sync/page-central.php:152
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:150
 msgid "URLs"
 msgstr ""
 
-#: c:\user-sync/page-central.php:155
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:153
 msgid "Last Sync"
 msgstr ""
 
-#: c:\user-sync/page-central.php:158
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:156
 msgid "Settings"
 msgstr ""
 
-#: c:\user-sync/page-central.php:161
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:159
 msgid "Action"
 msgstr ""
 
-#: c:\user-sync/page-central.php:193 c:\user-sync/page-sub.php:90
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:191
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:90
 msgid "Do not replace deleted users"
 msgstr ""
 
-#: c:\user-sync/page-central.php:198 c:\user-sync/page-sub.php:95
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:196
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:95
 msgid "Don't overwrite any existing users (add them as extra users)"
 msgstr ""
 
-#: c:\user-sync/page-central.php:219
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:214
 msgid "Sync all sites now"
 msgstr ""
 
-#: c:\user-sync/page-central.php:230 c:\user-sync/page-sub.php:126
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:223
+msgid "There are no subsites registered to this master site"
+msgstr ""
+
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:232
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:126
 msgid "Uninstall Options"
 msgstr ""
 
-#: c:\user-sync/page-central.php:231 c:\user-sync/page-sub.php:127
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:233
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:127
 msgid "Delete all plugin's options from DB."
 msgstr ""
 
-#: c:\user-sync/page-central.php:235 c:\user-sync/page-sub.php:131
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:236
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:130
 msgid "Are you sure?"
 msgstr ""
 
-#: c:\user-sync/page-central.php:237 c:\user-sync/page-sub.php:133
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:239
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:133
 msgid "No"
 msgstr ""
 
-#: c:\user-sync/page-central.php:238 c:\user-sync/page-sub.php:134
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-central.php:240
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:134
 msgid "Yes"
 msgstr ""
 
-#: c:\user-sync/page-main.php:15
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:15
 msgid "Site Type"
 msgstr ""
 
-#: c:\user-sync/page-main.php:16
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:16
 msgid ""
 "User sync works by making one site a 'Master' site and all other sites 'Sub'."
 msgstr ""
 
-#: c:\user-sync/page-main.php:17
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:17
 msgid ""
 "If you want to sync all the users from this site with other sites, make this "
 "a Master site."
 msgstr ""
 
-#: c:\user-sync/page-main.php:18
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:18
 msgid ""
 "However, if you want to sync the users from other sites to this site, make "
 "this a Sub site."
 msgstr ""
 
-#: c:\user-sync/page-main.php:19
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:19
 msgid ""
 "You can always change these options later by deactivating and then "
 "reactivating the plugin."
 msgstr ""
 
-#: c:\user-sync/page-main.php:20
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:20
 msgid "NB: You must have at least one Master site!"
 msgstr ""
 
-#: c:\user-sync/page-main.php:41
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:39
 msgid ""
 "Note: If you have any problems with sync users you can use debug mode for "
 "writing some operations in the log file. You need open folder \"/plugins/"
@@ -179,86 +339,93 @@ msgid ""
 "instruction of plugin"
 msgstr ""
 
-#: c:\user-sync/page-main.php:42
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:40
 msgid "here"
 msgstr ""
 
-#: c:\user-sync/page-main.php:45
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:43
 msgid "Use Debug Mode"
 msgstr ""
 
-#: c:\user-sync/page-main.php:52
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:48
 msgid "Make this site the Master site"
 msgstr ""
 
-#: c:\user-sync/page-main.php:53
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-main.php:49
 msgid "Make this a Sub site"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:14
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:14
 msgid "Please write URL of Central blog"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:19
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:19
 msgid "Please write Key of Central blog"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:58
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:58
 msgid "Subsite Settings"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:59
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:59
 msgid "All user data from the Master site will be synchronized with this site."
 msgstr ""
 
-#: c:\user-sync/page-sub.php:72
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:72
 msgid "Key of Master site:"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:81
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:81
 msgid "Default settings:"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:85
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:85
 msgid "You can change these settings later on the Master site."
 msgstr ""
 
-#: c:\user-sync/page-sub.php:102
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:102
 msgid ""
 "Note: Use caution if you choose to overwrite existing users as it replaces "
 "all existing users and their passwords if the same username exists on the "
 "subsite."
 msgstr ""
 
-#: c:\user-sync/page-sub.php:115
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:115
 msgid "Connect this site to the Master site, and do a FULL synchronization"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:121
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:121
 msgid "Disconnect from the Master site"
 msgstr ""
 
-#: c:\user-sync/page-sub.php:122
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/page-sub.php:122
 msgid "Disconnect syncing with Master site"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:33
-msgid ""
-"Please install the latest version of <a href=\"http://premium.wpmudev.org/"
-"project/update-notifications/\" title=\"Download Now &raquo;\">our free "
-"Update Notifications plugin</a> which helps you stay up-to-date with the "
-"most stable, secure versions of WPMU DEV themes and plugins. <a href="
-"\"http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-"
-"information/\">More information &raquo;</a>"
-msgstr ""
-
-#: c:\user-sync/user-sync.php:72
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:62
 msgid ""
 "There was an issue determining where WPMU DEV User Sync is installed. Please "
 "reinstall."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:78
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:68
 msgid ""
 "NOTE: Your server works in the 'Safe Mode' - If you have a large number of "
 "users for sync and your php settings are of little value for "
@@ -266,33 +433,41 @@ msgid ""
 "full sinchronization."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:118
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:106
 msgid "User Sync"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:278
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:237
 msgid "Options are deleted!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:297
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:256
 msgid ""
 "Subsite successfully connected to Master site and Synchronization completed."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:300
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:259
 msgid "There was a sync problem."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:307
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:266
 msgid ""
 "There was a connection problem. Please check the URL and Key of the Master "
 "site."
 msgstr ""
 
-#: c:\user-sync/user-sync.php:327
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:286
 msgid "Subsite and Settings were successfully removed from the Central site!"
 msgstr ""
 
-#: c:\user-sync/user-sync.php:336
+#: C:\Programs
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:295
+#: Portable\EasyPHP\data\localweb\wordpress-incsub\wp-content\plugins\user-sync/user-sync.php:650
 msgid "Synchronization of all Subsites completed."
 msgstr ""

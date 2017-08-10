@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.5.5
+Version: 1.1.5.6
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -875,6 +875,7 @@ class User_Sync {
                                  $this->set_options( 'sub_urls', $sub_urls );
                             }
                         } else {
+                            $sub_urls = array();
                             $sub_urls[] = $p;
                             $this->set_options( 'sub_urls', $sub_urls );
                         }
