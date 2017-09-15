@@ -408,7 +408,9 @@ class User_Sync {
      **/
     function get_all_users_id() {
         global $wpdb;
-        $rows = $wpdb->get_results( "SELECT ID FROM {$wpdb->base_prefix}users" );
+        
+        $sql = apply_filters('user_sync_custom_sql', "SELECT ID FROM {$wpdb->users}");
+        $rows = $wpdb->get_results( $sql );
 
         foreach( $rows as $row ) {
             $result[] = $row->ID;
