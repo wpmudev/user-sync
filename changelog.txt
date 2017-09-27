@@ -3,6 +3,9 @@ Author: WPMUDEV
 Lead developer: Maniu
 Contributors: Andrey Shipilov, Cole
 
+= 1.1.5.7 =
+Fixed issues with password synchronization
+
 = 1.1.5.6 =
 Fixed PHP 7 compatibility bug
 
