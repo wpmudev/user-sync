@@ -84,7 +84,9 @@ class User_Sync {
             add_action( 'profile_update', array( &$this, 'user_change_data' ), 20 );
             add_action( 'user_register', array( &$this, 'user_change_data' ), 20 );
            
-            add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
+			add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
+			
+			add_action( 'after_password_reset', array( &$this, 'user_password_reset' ), 20, 2 );
         }
         //add_action( 'bp_core_signup_after_activate', array( &$this, 'bp_users_activate' ), 20, 2 );
 
@@ -527,7 +529,15 @@ class User_Sync {
     function user_change_data( $userID ) {
         //Call Synchronization function with ID of changed user and array of all Subsite URLs
         $this->sync_user( $userID, $this->options['sub_urls'], false );
-    }
+	}
+	
+	/**
+	 * Password reset
+	 *
+	 */
+	function user_password_reset( $user, $new_password ) {
+		$this->sync_user( $user->ID, $this->options['sub_urls'], false );
+	}
 
     /**
      * Synchronization when user deleting
