@@ -392,7 +392,7 @@ class User_Sync {
         $hash = $this->send_request( $url, "str=" . $str );
 
         //checking hash from Subsite and Central site
-        if ( $hash == md5( $str . "" . $key ) ) {
+        if ( trim($hash) == md5( $str . "" . $key ) ) {
             //writing some information in the plugin log file
             $this->write_log( "05 - checking key true;;" );
 
@@ -1040,4 +1040,3 @@ class User_Sync {
 }
 
 $user_sync = new User_Sync();
-?>
