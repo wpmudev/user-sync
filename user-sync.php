@@ -3,7 +3,7 @@
 Plugin Name: User Synchronization
 Plugin URI: http://premium.wpmudev.org/project/wordpress-user-synchronization
 Description: User Synchronization - This plugin allows you to create a Master site from which you can sync a user list with as many other sites as you like - once activated get started <a href="admin.php?page=user-sync">here</a>
-Version: 1.1.5.7
+Version: 1.1.5.8
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 218
@@ -46,21 +46,10 @@ class User_Sync {
         $wpmudev_notices[] = array( 'id'=> 218,'name'=> 'User Synchronization', 'screens' => array( 'toplevel_page_user-sync' ) );
         include_once( $this->plugin_dir . 'wpmudev-dash-notification.php' );
 
-        load_plugin_textdomain( 'user-sync', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+        load_plugin_textdomain( 'user-sync', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
-        //setup proper directories
-        if ( is_multisite() && defined( 'WPMU_PLUGIN_URL' ) && defined( 'WPMU_PLUGIN_DIR' ) && file_exists( WPMU_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
-            $this->plugin_dir = WPMU_PLUGIN_DIR . '/user-sync/';
-            $this->plugin_url = WPMU_PLUGIN_URL . '/user-sync/';
-        } else if ( defined( 'WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/user-sync/' . basename( __FILE__ ) ) ) {
-            $this->plugin_dir = WP_PLUGIN_DIR . '/user-sync/';
-            $this->plugin_url = WP_PLUGIN_URL . '/user-sync/';
-        } else if ( defined('WP_PLUGIN_URL' ) && defined( 'WP_PLUGIN_DIR' ) && file_exists( WP_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
-            $this->plugin_dir = WP_PLUGIN_DIR;
-            $this->plugin_url = WP_PLUGIN_URL;
-        } else {
-            wp_die( __( 'There was an issue determining where WPMU DEV User Sync is installed. Please reinstall.', 'user-sync' ) );
-        }
+        $this->plugin_dir = plugin_dir_path( __FILE__ );
+        $this->plugin_url = plugin_dir_url( __FILE__ );
 
         // Check for safe mode
         if ( ini_get( 'safe_mode' ) ) {
