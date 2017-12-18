@@ -6,6 +6,8 @@ Description: User Synchronization - This plugin allows you to create a Master si
 Version: 1.1.5.8
 Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
+Text Domain: user-sync
+Domain Path: /languages
 WDP ID: 218
 
 Copyright 2007-2013 Incsub (http://incsub.com)
