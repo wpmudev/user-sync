@@ -74,7 +74,7 @@ class User_Sync {
         if ( "central" == $this->options['status'] ) {
             add_action( 'profile_update', array( &$this, 'user_change_data' ), 20 );
             add_action( 'user_register', array( &$this, 'user_change_data' ), 20 );
-            add_action( 'run_user_change_data_event', array( &$this, 'user_change_data_event' ) );
+            add_action( 'run_user_change_data_event', array( &$this, 'user_change_data_event' ), 20 );
             add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
             add_action( 'after_password_reset', array( &$this, 'user_password_reset' ), 20, 2 );
             add_action( 'run_user_password_reset_event', array( &$this, 'user_password_reset_event' ), 20, 2 );
