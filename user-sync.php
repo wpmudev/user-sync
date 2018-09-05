@@ -43,10 +43,9 @@ class User_Sync {
 	 * PHP 5 constructor
 	 **/
 	function __construct() {
-
         global $wpmudev_notices;
         $wpmudev_notices[] = array( 'id'=> 218,'name'=> 'User Synchronization', 'screens' => array( 'toplevel_page_user-sync' ) );
-        include_once( $this->plugin_dir . 'wpmudev-dash-notification.php' );
+        include_once( 'dash-notice/wpmudev-dash-notification.php' );
 
         load_plugin_textdomain( 'user-sync', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
