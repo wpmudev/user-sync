@@ -74,10 +74,11 @@ class User_Sync {
         if ( "central" == $this->options['status'] ) {
             add_action( 'profile_update', array( &$this, 'user_change_data' ), 20 );
             add_action( 'user_register', array( &$this, 'user_change_data' ), 20 );
-           
-			add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
-			
-			add_action( 'after_password_reset', array( &$this, 'user_password_reset' ), 20, 2 );
+            add_action( 'run_user_change_data_event', array( &$this, 'user_change_data_event' ), 20 );
+            add_action( 'delete_user', array( &$this, 'user_delete_data' ), 20 );
+            add_action( 'after_password_reset', array( &$this, 'user_password_reset' ), 20, 2 );
+            add_action( 'run_user_password_reset_event', array( &$this, 'user_password_reset_event' ), 20, 2 );
+
         }
         //add_action( 'bp_core_signup_after_activate', array( &$this, 'bp_users_activate' ), 20, 2 );
 
@@ -520,17 +521,30 @@ class User_Sync {
      * Synchronization when user edit profile
      **/
     function user_change_data( $userID ) {
+        $this->write_log( time() . " Changing Data for user: {$userID}" );
+        wp_schedule_single_event( time(), 'run_user_change_data_event', array( $userID ) );
+    }
+
+    function user_change_data_event( $userID ) {
+        $this->write_log( time() . " Running scheduled Sync event for user: {$userID}" );
         //Call Synchronization function with ID of changed user and array of all Subsite URLs
         $this->sync_user( $userID, $this->options['sub_urls'], false );
-	}
-	
+    }
+
 	/**
 	 * Password reset
 	 *
 	 */
 	function user_password_reset( $user, $new_password ) {
-		$this->sync_user( $user->ID, $this->options['sub_urls'], false );
-	}
+        $this->write_log( time() . " Changing Password for user: {$user->ID}" );
+        wp_schedule_single_event( time(), 'run_user_password_reset_event', array( $user, $new_password ) );
+
+    }
+
+    function user_password_reset_event( $user, $new_password ) {
+        $this->write_log( time() . " Running scheduled Password Change event for user: {$user->ID}" );
+        $this->sync_user( $user->ID, $this->options['sub_urls'], false );
+    }
 
     /**
      * Synchronization when user deleting
