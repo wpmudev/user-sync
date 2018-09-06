@@ -3,6 +3,13 @@ Author: WPMUDEV
 Lead developer: Maniu
 Contributors: Andrey Shipilov, Cole
 
+= 1.1.5.9 =
+Changed sync method so it's performed by cron to improve user registration/update time
+
+= 1.1.5.8 =
+Fixed file paths to work with SSL
+Improved compatibility with other plugins
+
 = 1.1.5.8 =
 Fixed file paths to work with SSL
 Improved compatibility with other plugins
