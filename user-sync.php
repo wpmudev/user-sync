@@ -90,6 +90,9 @@ class User_Sync {
         add_action( 'wp_ajax_user_sync_settings', array( &$this, 'edit_settings' ) );
 
         add_action('admin_enqueue_scripts', array($this,'register_scripts_styles_admin'));
+
+        // adds privacy policy text suggestion
+        add_action( 'admin_init', array( $this, 'privacy_policy_suggested_text' ) );
 	}
 
     /**
@@ -401,7 +404,7 @@ class User_Sync {
      **/
     function get_all_users_id() {
         global $wpdb;
-        
+
         $sql = apply_filters('user_sync_custom_sql', "SELECT ID FROM {$wpdb->users}");
         $rows = $wpdb->get_results( $sql );
 
@@ -661,7 +664,7 @@ class User_Sync {
             $sites = array_slice($sites, ($_REQUEST['site']-1), 1);
 
             $sites_end = !$sites ? 1 : 0;
-            
+
             if($sites_end)
                 $redirect_url = add_query_arg( array( 'page' => 'user-sync', 'updated' => 'true', 'dmsg' => urlencode( __( 'Synchronization of all Subsites completed.', 'user-sync' ) ) ), 'admin.php' );
         }
@@ -963,14 +966,14 @@ class User_Sync {
 		} else {
 			$domain = $url_info['basename'];
 		}
-		
+
 		$domain     = str_replace( "www.", "", $domain );
 		$user_count = get_user_count();
 
         if ( empty( $user_name ) ){
             $user_name = 'test';
         }
-		
+
 		return $user_name.'_'.$user_count.'@'.$domain;
 	}
 
@@ -1043,6 +1046,25 @@ class User_Sync {
         var_dump($signup_ids, $result);
         die();
     }
+
+    /**
+	 * Adds the Privacy Policy Suggested Text
+	 *
+	 * @uses function_exists
+	 * @uses ob_start
+	 * @uses ob_get_clean
+	 * @uses wp_add_privacy_policy_content
+	 */
+	public function privacy_policy_suggested_text() {
+		if ( function_exists( 'wp_add_privacy_policy_content' ) ) {
+			ob_start();
+			include dirname( __FILE__ ) . '/policy-text.php';
+			$content = ob_get_clean();
+			if ( ! empty( $content ) ) {
+				wp_add_privacy_policy_content( __( 'User Synchronization', 'user-sync' ), $content );
+			}
+		}
+	}
 }
 
 $user_sync = new User_Sync();
