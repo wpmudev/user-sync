@@ -74,5 +74,3 @@ Once the plugin is activated you'll see a new "User Sync" menu added. 1.  Go to
 If you have any problems with sync users you can use debug mode for writing some operations in the log file. **How to use:** 1\. Select checkbox "Use Debug Mode" on main plugin page before select "Master" or "Sub-site". 
 
 ![Debug Mode](https://premium.wpmudev.org/wp-content/uploads/2011/09/sync_debug.png)
-
- 2\. You should activated Debug Mode for both sites - Master and Subsite. 3\. Try to connect the Subsite to Master site. 4\. Describe your problem here: https://premium.wpmudev.org/forums/#question Like you see here: https://premium.wpmudev.org/forums/topic/user-sync-problem-with-synchronization 5\. Copy log files /plugins/user-sync/log/error.log from Master site and Subsite. 6\. **When and if the developer asks**: Give these files to the Developer for analysis - send links for downloading these files from the [Contact Form](https://premium.wpmudev.org/contact/) and mark it for attention [User Sync - DEV] **ATTENTION: Please, don't attach log files or links of them in the post - these files may contain PRIVATE information!!!**
